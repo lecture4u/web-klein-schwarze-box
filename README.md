@@ -21,7 +21,7 @@ npm install
 npm run serve
 ```
 ```diff
-IMPORTANT: before run vue-cli dev server, please check if api server is running. if run api server after running vue dev server, there must be problem
+- IMPORTANT: before run vue-cli dev server, please check if api server is running. if run api server after running vue dev server, there must be problem
 ```
 
 
