@@ -2,8 +2,8 @@ const webpack = require('webpack')
 const path = require('path')
 
 module.exports = {
-    // indexPath: "../../2_backend/histree/src/main/resources/templates/index.html",
-    outputDir: '../../2_backend/histree/src/main/resources/static',
+    // indexPath: "../../2_backend/KleinSchwarzeBox/src/main/resources/templates/index.html",
+    outputDir: '../../2_backend/KleinSchwarzeBox/src/main/resources/static',
     devServer: {
       proxy: { // proxyTable 설정
         '/api': {
