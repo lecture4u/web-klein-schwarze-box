@@ -24,8 +24,10 @@ npm run serve
 - IMPORTANT: before run vue-cli dev server, please check if api server is running. if run api server after running vue dev server, there must be problem
 ```
 
+front dev server is on localhost:8080 refer to vue-cli instruction
 
-## 2. backend: Springboot
-springboot 2.1.3
+## 2. backend: Springboot 2.1.3
 
-use gradle instead of maven
+dependency mgmt: use **gradle** instead of maven(~~love gradle!~~)
+
+deploy server is on localhost:3000 refer to application-properties.yml, which spcifies springboot configuration
