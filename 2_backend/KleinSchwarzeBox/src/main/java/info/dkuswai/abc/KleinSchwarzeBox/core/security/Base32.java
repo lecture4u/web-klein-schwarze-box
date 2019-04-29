@@ -1,4 +1,4 @@
-package security;
+package info.dkuswai.abc.KleinSchwarzeBox.core.security;
 
 public final class Base32 {
 	private final String base32Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";

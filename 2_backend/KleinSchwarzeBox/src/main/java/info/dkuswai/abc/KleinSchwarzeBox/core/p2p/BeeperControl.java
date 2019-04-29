@@ -1,4 +1,4 @@
-package p2p;
+package info.dkuswai.abc.KleinSchwarzeBox.core.p2p;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
