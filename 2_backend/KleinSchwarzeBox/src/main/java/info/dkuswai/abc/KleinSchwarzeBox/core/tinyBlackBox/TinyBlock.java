@@ -1,4 +1,4 @@
-package tinyBlackBox;
+package info.dkuswai.abc.KleinSchwarzeBox.core.tinyBlackBox;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

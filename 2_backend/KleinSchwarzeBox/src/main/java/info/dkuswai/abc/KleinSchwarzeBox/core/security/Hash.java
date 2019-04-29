@@ -1,4 +1,4 @@
-package security;
+package info.dkuswai.abc.KleinSchwarzeBox.core.security;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 //import java.util.Random;

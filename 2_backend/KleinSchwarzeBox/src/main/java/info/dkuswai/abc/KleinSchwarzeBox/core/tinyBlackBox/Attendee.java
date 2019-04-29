@@ -1,4 +1,4 @@
-package tinyBlackBox;
+package info.dkuswai.abc.KleinSchwarzeBox.core.tinyBlackBox;
 
 public interface Attendee {
 	public void update(int senderID, String topic, int data);

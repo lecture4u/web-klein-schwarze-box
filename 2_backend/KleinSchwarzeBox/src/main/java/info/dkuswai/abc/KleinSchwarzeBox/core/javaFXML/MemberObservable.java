@@ -1,4 +1,4 @@
-package javaFXML;
+package info.dkuswai.abc.KleinSchwarzeBox.core.javaFXML;
 
 import java.util.Observable;
 

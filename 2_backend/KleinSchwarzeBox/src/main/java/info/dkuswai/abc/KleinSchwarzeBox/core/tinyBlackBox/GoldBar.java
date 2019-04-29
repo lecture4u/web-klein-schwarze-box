@@ -1,4 +1,4 @@
-package tinyBlackBox;
+package info.dkuswai.abc.KleinSchwarzeBox.core.tinyBlackBox;
 
 public class GoldBar {
 	private byte[] blockFixed = null;
