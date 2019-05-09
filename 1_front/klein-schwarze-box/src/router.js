@@ -25,6 +25,22 @@ export default new Router({
       component: () => import(`${views}/hashing.vue`)
     },
     {
+      path: '/transaction-block',
+      component: () => import(`${views}/transaction-block.vue`)
+    },
+    {
+      path: '/wallet',
+      component: () => import(`${views}/wallet.vue`)
+    },
+    {
+      path: '/blockchain',
+      component: () => import(`${views}/blockchain.vue`)
+    },
+    {
+      path: '/contributor',
+      component: () => import(`${views}/contributor.vue`)
+    },
+    {
       path: '/about',
       component: () => import(`${views}/about.vue`)
     },
