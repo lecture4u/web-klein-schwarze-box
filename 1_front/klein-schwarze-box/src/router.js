@@ -17,17 +17,12 @@ export default new Router({
       redirect: '/security'
     },
     {
-      path: '/hashing',
-      redirect: '/hashing'
-    },
-    {
-      //otherwise, goto 404
-      path: '*',
-      redirect: '/404'
-    },
-    {
       path: '/security',
       component: () => import(`${views}/security.vue`)
+    },
+    {
+      path: '/hashing',
+      component: () => import(`${views}/hashing.vue`)
     },
     {
       path: '/about',
@@ -36,6 +31,11 @@ export default new Router({
     {
       path: '/404',
       component: () => import(`${views}/ready-temp.vue`)
+    },
+    {
+      //otherwise, goto 404
+      path: '*',
+      redirect: '/404'
     }
   ]
 })
