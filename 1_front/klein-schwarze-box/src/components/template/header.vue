@@ -3,12 +3,12 @@
     <div class="container">
       <h3 class="logo"><router-link to="/"><img src="@/assets/abc-logo.png" alt="abc"></router-link></h3>
       <nav class="gnb">
-        <router-link to="/#">Security</router-link>
-        <router-link to="/#">Hashing</router-link>
-        <router-link to="/#">Transaction & Block</router-link>
-        <router-link to="/#">Wallet</router-link>
-        <router-link to="/#">Blockchain</router-link>
-        <router-link to="/#">Contributor</router-link>
+        <router-link to="/">Security</router-link>
+        <router-link to="/hashing">Hashing</router-link>
+        <router-link to="/transaction-block">Transaction & Block</router-link>
+        <router-link to="/wallet">Wallet</router-link>
+        <router-link to="/blockchain">Blockchain</router-link>
+        <router-link to="/contributor">Contributor</router-link>
       </nav>
     </div>
   </header>

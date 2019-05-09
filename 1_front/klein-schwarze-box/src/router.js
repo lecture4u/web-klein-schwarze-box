@@ -14,11 +14,28 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/about'
+      redirect: '/security'
+    },
+    {
+      path: '/hashing',
+      redirect: '/hashing'
+    },
+    {
+      //otherwise, goto 404
+      path: '*',
+      redirect: '/404'
+    },
+    {
+      path: '/security',
+      component: () => import(`${views}/security.vue`)
     },
     {
       path: '/about',
       component: () => import(`${views}/about.vue`)
+    },
+    {
+      path: '/404',
+      component: () => import(`${views}/ready-temp.vue`)
     }
   ]
 })
