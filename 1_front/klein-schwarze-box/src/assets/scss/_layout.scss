@@ -21,7 +21,7 @@
 
 /* layout */
 .float-wrap:after{content:"";display:block;clear:both;}
-.site-content{padding:10px 0;background:#f5f5f5;}
+.site-content{padding:0;background:#f5f5f5;}
 .content-title{font-size:30px;color:$color-blue-darken-10;font-weight:400;border-bottom:1px solid #ddd;margin-bottom:20px;padding-bottom:20px;}
 .requirement-title{font-size:21px;margin-bottom:20px;font-weight:normal;
   &:before{content:"";display:inline-block;vertical-align:middle;width:3px;background:$color-blue;height:21px;margin-right:10px;}
@@ -36,10 +36,10 @@ span.middle{display:inline-block;vertical-align:middle;height:100%;width:0;
 
 /* tutorial */
 .content{
-  display:flex;justify-content:space-between;align-items:center;
+  display:flex;justify-content:space-between;align-items: center;
   h4{font-size:21px;margin-bottom:10px;}
   .content-format{font-size: 12px;}
-  .left-guide{width:25%;margin: auto;padding:30px;background-color: #006AB2;color: #fff}
+  .left-guide{width:25%;margin: auto;padding:20px;background-color: #006AB2;color: #fff;}
   .program{width:75%;margin: auto;
     .fields{width:80%;margin:0 auto;}
   }
@@ -50,6 +50,7 @@ span.middle{display:inline-block;vertical-align:middle;height:100%;width:0;
       .right{width:20%}
     }
   }
+  .description{background-color: #fff; color: #000; padding: 10px; margin: 20px 5px;}
   
 }
 
