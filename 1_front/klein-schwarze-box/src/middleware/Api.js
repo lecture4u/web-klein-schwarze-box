@@ -15,9 +15,9 @@ const RestApi = class {
     // 에러가 없으면 data 반환
     return data
   }
-  //get otp from server
-  async getUserOtp () { return await this.result(axios.get(`${baseURL}/userOtp`)) }
-  async postClearRoom (params) { return await this.result(axios.post(`${baseURL}/clearRoom`, params)) }
+  //get hash from server
+  async getHash () { return await this.result(axios.get(`${baseURL}/hash`)) }
+  
 
   //for test
   async getTest () { return await this.result(axios.get(`${baseURL}/test`)) }

@@ -105,7 +105,7 @@
                       <span class="lbl">값을 입력하세요</span>
                     </div>
                     <div class="coll right">
-                      <button type="submit" class="btn full submit content-format" @click.prevent="testSubmit">Generate Hash {{text}}</button>
+                      <button type="submit" class="btn full submit content-format" @click.prevent="testSubmit">Generate Hash</button>
                     </div>
                   </label>
                 </li>
@@ -120,8 +120,8 @@
                       <span class="pre">
                         <i class="fas fa-pen"></i>
                       </span>
-                      <input type="text" class="full-width" ref="title" v-model="testInput" size="80" required>
-                      <span class="lbl">Hash된 결과</span>
+                      <input type="text" class="full-width" ref="title" v-model="hashed" size="80" required>
+                      <span class="lbl">Hash된 결과(Digested)</span>
                     </div>
                   </label>
                 </li>
@@ -141,19 +141,20 @@
 </template>
 
 <script>
-// import Api from '@/middleware/Api'
+import Api from '@/middleware/Api'
 export default {
   created() {},
   data() {
     return {
       text: "",
       testInput: "",
-      step: 1
-    };
+      step: 1,
+      hashed: ""
+    }
   },
   methods: {
-    testSubmit() {
-      this.text = this.testInput;
+    async testSubmit() {
+      this.hashed = (await Api.getHash()).data
     },
     goToStep(num) {
       this.step = num;
