@@ -1,7 +1,3 @@
-/*
-From @yoseplee
-Reference for Spring Controller. this is for javaFX controller
-*/
 
 // package info.dkuswai.abc.KleinSchwarzeBox.core.javaFXML;
 

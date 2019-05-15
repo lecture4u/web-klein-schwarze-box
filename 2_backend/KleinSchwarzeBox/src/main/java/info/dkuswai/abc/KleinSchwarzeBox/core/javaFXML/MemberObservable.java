@@ -1,12 +1,12 @@
-package info.dkuswai.abc.KleinSchwarzeBox.core.javaFXML;
+// package info.dkuswai.abc.KleinSchwarzeBox.core.javaFXML;
 
-import java.util.Observable;
+// import java.util.Observable;
 
-public class MemberObservable extends Observable {
+// public class MemberObservable extends Observable {
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+// 	public static void main(String[] args) {
+// 		// TODO Auto-generated method stub
 
-	}
+// 	}
 
-}
+// }
