@@ -101,7 +101,7 @@
                       <span class="pre">
                         <i class="fas fa-pen"></i>
                       </span>
-                      <input type="text" class="full-width" ref="title" v-model="testInput" size="80" required>
+                      <input type="text" class="full-width" ref="title" v-model="toHash" size="80" required>
                       <span class="lbl">값을 입력하세요</span>
                     </div>
                     <div class="coll right">
@@ -147,14 +147,14 @@ export default {
   data() {
     return {
       text: "",
-      testInput: "",
+      toHash: "",
       step: 1,
       hashed: ""
     }
   },
   methods: {
     async testSubmit() {
-      this.hashed = (await Api.getHash()).data
+      this.hashed = (await Api.getHash(this.toHash)).data
     },
     goToStep(num) {
       this.step = num;

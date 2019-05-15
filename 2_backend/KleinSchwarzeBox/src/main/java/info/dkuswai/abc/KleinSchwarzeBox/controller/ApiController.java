@@ -3,6 +3,8 @@ package info.dkuswai.abc.KleinSchwarzeBox.controller;
 import java.util.HashMap;
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import info.dkuswai.abc.KleinSchwarzeBox.mapper.BasicMapper;
@@ -21,10 +23,15 @@ public class ApiController {
         return obj;
     }
 
-    @GetMapping(value = "/api/hash")
-    public HashMap<String, Object> apiHash() {
+    @GetMapping(value = "/api/hash/**")
+    public HashMap<String, Object> apiHash(@RequestParam HashMap<String, Object> params) {
+        
         HashMap<String, Object> obj = new HashMap<String, Object>();
-        String data = "11";
+        
+        //get request parameter from application
+        //and take "data" key to digest
+        System.out.println(params);
+        String data = params.get("data").toString();
         obj.put("success", true);
         
         //If there is an error when data hashed by function named generatHashfunction(),
