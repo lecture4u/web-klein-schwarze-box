@@ -20,22 +20,22 @@ export default new Router({
       path: '/security',
       component: () => import(`${views}/security.vue`)
     },
-    {
-      path: '/hashing',
-      component: () => import(`${views}/hashing.vue`)
-    },
-    {
-      path: '/transaction-block',
-      component: () => import(`${views}/transaction-block.vue`)
-    },
-    {
-      path: '/wallet',
-      component: () => import(`${views}/wallet.vue`)
-    },
-    {
-      path: '/blockchain',
-      component: () => import(`${views}/blockchain.vue`)
-    },
+    // {
+    //   path: '/hashing',
+    //   component: () => import(`${views}/hashing.vue`)
+    // },
+    // {
+    //   path: '/transaction-block',
+    //   component: () => import(`${views}/transaction-block.vue`)
+    // },
+    // {
+    //   path: '/wallet',
+    //   component: () => import(`${views}/wallet.vue`)
+    // },
+    // {
+    //   path: '/blockchain',
+    //   component: () => import(`${views}/blockchain.vue`)
+    // },
     {
       path: '/contributor',
       component: () => import(`${views}/contributor.vue`)
