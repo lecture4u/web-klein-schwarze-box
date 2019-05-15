@@ -16,7 +16,6 @@ const RestApi = class {
     return data
   }
   //get hash from server
-  // async getHash (params) { return await this.result(axios.get(`${baseURL}/hash?data=${params}`)) }
   async getHash (hash) { return await this.result(axios.get(`${baseURL}/hash?data=${hash}`)) }
 
   //for test

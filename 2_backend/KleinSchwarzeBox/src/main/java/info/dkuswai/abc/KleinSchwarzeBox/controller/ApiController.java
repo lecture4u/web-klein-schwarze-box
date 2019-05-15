@@ -23,6 +23,11 @@ public class ApiController {
         return obj;
     }
 
+    /*
+    * Author: @JEONGCHAEEUN
+    * modified: 2019.05.15. @yoseplee
+    *   - implement request parameter and data handling
+    */
     @GetMapping(value = "/api/hash/**")
     public HashMap<String, Object> apiHash(@RequestParam HashMap<String, Object> params) {
         
