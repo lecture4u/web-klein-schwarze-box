@@ -39,7 +39,7 @@ public class KeyService {
 		loadKey(fileName);
 	}
 
-	public KeyService(byte[] pubKey, byte[] priKey) {
+	public KeyService(String pubKey, String priKey) {
 		makeKey(pubKey, priKey);
 	}
 
@@ -81,7 +81,7 @@ public class KeyService {
 		return 0;
 	}
 
-	public int makeKey(byte[] pubKey, byte[] priKey) {
+	public int makeKey(String pubKey, String priKey) {
 		//@Author: @yoseplee
 		//@description:
 		//make key from pubkey and prikey from outside source
@@ -91,11 +91,17 @@ public class KeyService {
 		//if it wanted to encoding and decoding througt its key, this should make keyService instance again
 		//at this point, this method can strongly be utilized.
 		try {
-			// byte[] clearPubKey = Base64.getDecoder().decode(pubKey);
-			// byte[] clearPriKey = Base64.getDecoder().decode(priKey);
 			
+			byte[] clearPubKey = Base64.getDecoder().decode(pubKey);
+			byte[] clearPriKey = Base64.getDecoder().decode(priKey);
+			X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(clearPubKey);
+			PKCS8EncodedKeySpec priSpec = new PKCS8EncodedKeySpec(clearPriKey);
+			
+			
+			/*
 			X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(pubKey);
 			PKCS8EncodedKeySpec priSpec = new PKCS8EncodedKeySpec(priKey);
+			*/
 
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 			publicKey = keyFactory.generatePublic(pubSpec);

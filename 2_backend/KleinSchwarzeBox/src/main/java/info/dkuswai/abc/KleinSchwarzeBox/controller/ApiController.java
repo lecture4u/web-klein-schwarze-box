@@ -71,38 +71,25 @@ public class ApiController {
             Hash hashfun = new Hash("MD5");
             //generate public key
             String pubLabel = hashfun.bytesToString(key.getPublicKey().getEncoded());
-            // StringBuffer pubBuffer = new StringBuffer(pubLabel);
-
-            //@yoseplee
-            //possibly a code for representation on javaFx. no need anymore.
-            // for(int i =0; i<pubBuffer.length(); i++){
-            //     if(i%130 == 0){
-            //         pubBuffer.insert(i, "\n");
-            //     }
-            // }
-            // pubLabel = pubBuffer.toString();
             
             //generate private key
             String priLabel = hashfun.bytesToString(key.getPrivateKey().getEncoded());
-            // StringBuffer priBuffer = new StringBuffer(priLabel);
-            // for(int i =0; i<priBuffer.length(); i++){
-            //     if(i%130== 0){
-            //         priBuffer.insert(i, "\n");
-            //     }
-            // }
-            // priLabel = priBuffer.toString();
             
             //print public key and private key into json type
             // obj.put("PublicKey: ", pubLabel);
             // obj.put("PrivateKey: ", priLabel);
             obj.put("pubkey", key.getPublicKey().getEncoded());
-            obj.put("pubkey_re", Base64.getEncoder().encode( key.getPublicKey().getEncoded()));
+            obj.put("pubkey_re", Base64.getEncoder().encodeToString(key.getPublicKey().getEncoded()));
             obj.put("prikey", key.getPrivateKey().getEncoded());
-            obj.put("prikey_re", Base64.getEncoder().encode( key.getPrivateKey().getEncoded()));
+            obj.put("prikey_re", Base64.getEncoder().encodeToString(key.getPrivateKey().getEncoded()));
 
             //for testing KeyService instantiate
+            /*
             KeyService ks = new KeyService(key.getPublicKey().getEncoded(), key.getPrivateKey().getEncoded());
             System.out.println(ks.getPublicKey());
+            */
+            // KeyService ks = new KeyService(Base64.getEncoder().encode( key.getPublicKey().getEncoded()), Base64.getEncoder().encode( key.getPrivateKey().getEncoded()));
+            // System.out.println(ks.getPublicKey());
             
         } catch(Exception exception) {
                 obj.put("success", false);
@@ -112,11 +99,11 @@ public class ApiController {
     }
 
     @GetMapping(value = "/api/puben")
-    private HashMap<String, Object> publicEncryption(@RequestParam HashMap<String, Object> params){
+    private HashMap<String, Object> publicEncryption(@RequestParam HashMap<String, String> params){
         HashMap<String, Object> obj = new HashMap<String, Object>();
         String hashData = params.get("data").toString();
-        byte[] pubKeyParams = params.get("pubKey").toString().getBytes();
-        byte[] priKeyParams = params.get("priKey").toString().getBytes();
+        String pubKeyParams = params.get("pubKey");
+        String priKeyParams = params.get("priKey");
         System.out.println(params);
         System.out.println(hashData);
 
