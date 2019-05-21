@@ -1,5 +1,6 @@
 package info.dkuswai.abc.KleinSchwarzeBox.controller;
 
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 import javax.annotation.Resource;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.Base64;
 
 import info.dkuswai.abc.KleinSchwarzeBox.mapper.BasicMapper;
 import info.dkuswai.abc.KleinSchwarzeBox.core.security.*;
@@ -69,27 +71,38 @@ public class ApiController {
             Hash hashfun = new Hash("MD5");
             //generate public key
             String pubLabel = hashfun.bytesToString(key.getPublicKey().getEncoded());
-            StringBuffer pubBuffer = new StringBuffer(pubLabel);
-            for(int i =0; i<pubBuffer.length(); i++){
-                if(i%130 == 0){
-                    pubBuffer.insert(i, "\n");
-                }
-            }
-            pubLabel = pubBuffer.toString();
+            // StringBuffer pubBuffer = new StringBuffer(pubLabel);
+
+            //@yoseplee
+            //possibly a code for representation on javaFx. no need anymore.
+            // for(int i =0; i<pubBuffer.length(); i++){
+            //     if(i%130 == 0){
+            //         pubBuffer.insert(i, "\n");
+            //     }
+            // }
+            // pubLabel = pubBuffer.toString();
             
             //generate private key
             String priLabel = hashfun.bytesToString(key.getPrivateKey().getEncoded());
-            StringBuffer priBuffer = new StringBuffer(priLabel);
-            for(int i =0; i<priBuffer.length(); i++){
-                if(i%130== 0){
-                    priBuffer.insert(i, "\n");
-                }
-            }
-            priLabel = priBuffer.toString();
+            // StringBuffer priBuffer = new StringBuffer(priLabel);
+            // for(int i =0; i<priBuffer.length(); i++){
+            //     if(i%130== 0){
+            //         priBuffer.insert(i, "\n");
+            //     }
+            // }
+            // priLabel = priBuffer.toString();
             
             //print public key and private key into json type
-            obj.put("PublicKey: ", pubLabel);
-            obj.put("PrivateKey: ", priLabel);
+            // obj.put("PublicKey: ", pubLabel);
+            // obj.put("PrivateKey: ", priLabel);
+            obj.put("pubkey", key.getPublicKey().getEncoded());
+            obj.put("pubkey_re", Base64.getEncoder().encode( key.getPublicKey().getEncoded()));
+            obj.put("prikey", key.getPrivateKey().getEncoded());
+            obj.put("prikey_re", Base64.getEncoder().encode( key.getPrivateKey().getEncoded()));
+
+            //for testing KeyService instantiate
+            KeyService ks = new KeyService(key.getPublicKey().getEncoded(), key.getPrivateKey().getEncoded());
+            System.out.println(ks.getPublicKey());
             
         } catch(Exception exception) {
                 obj.put("success", false);
@@ -102,19 +115,22 @@ public class ApiController {
     private HashMap<String, Object> publicEncryption(@RequestParam HashMap<String, Object> params){
         HashMap<String, Object> obj = new HashMap<String, Object>();
         String hashData = params.get("data").toString();
-        PublicKey pubkey = (PublicKey)params.get("pubkey");
-        key = new KeyService();
-
+        byte[] pubKeyParams = params.get("pubKey").toString().getBytes();
+        byte[] priKeyParams = params.get("priKey").toString().getBytes();
+        System.out.println(params);
         System.out.println(hashData);
-        String publicKey = key.encryptTextToPublic(hashData);
 
+        //error
+        key = new KeyService(pubKeyParams, priKeyParams);
+        System.out.println(key.getPublicKey());
+        //
+
+        String publicKey = key.encryptTextToPublic(hashData);
         try{
-            
             obj.put("publicKey", publicKey);
         } catch(Exception e){
             obj.put("success", false);
             e.printStackTrace();
-            //System.out.println("<script>alert('Encryption Error!'); history.go(-1);</script>");
         }
         return obj;
     }
