@@ -145,7 +145,7 @@ public class ApiController {
     }
    
     @GetMapping(value = "/api/pride")
-    private HashMap<String, Object> privateDecryption(@RequestAttribute(value = "prikey") HashMap<String, Object> params){
+    private HashMap<String, Object> privateDecryption(@RequestParam HashMap<String, Object> params){
         HashMap<String, Object> obj = new HashMap<String, Object>();
         String dataFromPrivate = params.get("prikey").toString();
         // PrivateKey prikey = (PrivateKey)params.get("prikey");
@@ -170,7 +170,7 @@ public class ApiController {
         HashMap<String, Object> obj = new HashMap<String, Object>();
 
         System.out.println(params1 + ", " + params2);
-        String noncePlusData = params1.get("data").toString() + params2.get("nonce");
+        String noncePlusData = params2.get("nonce") + params1.get("data").toString() ;
         try{
             obj.put("noncedata", noncePlusData);
             obj.put("hash", generatHashfunction(noncePlusData));
