@@ -166,7 +166,17 @@
               <legend>SECURITY</legend>
               <ul class="fields">
                 <li>
-                  <h4>Encryption</h4>
+                  <h4>{{encryptionMode}} Key Encryption</h4>
+                </li>
+                <li>
+                  <span>
+                    <input type="radio" id="encrypt_public" name="encryptionType" value="public" v-model="encryptionMode">
+                    <label for="encrypt_public">Public Key</label>
+                  </span>
+                  <span>
+                    <input type="radio" id="encrypt_private" name="encryptionType" value="private" v-model="encryptionMode">
+                    <label for="encrypt_private">Private Key</label>
+                  </span>
                 </li>
                 <li>
                   <label class="input-label linear">
@@ -178,7 +188,7 @@
                       <span class="lbl">암호화 할 값을 입력하세요(PlainText)</span>
                     </div>
                     <div class="coll right">
-                      <button type="submit" class="btn full submit content-format" @click.prevent="getPubEncryption">Encryption Button</button>
+                      <button type="submit" class="btn full submit content-format" @click.prevent="cryptoControl('encrypt')">Encryption Button</button>
                     </div>
                   </label>
                 </li>
@@ -195,7 +205,17 @@
               </ul>
               <ul class="fields">
                 <li>
-                  <h4>Decryption</h4>
+                  <h4>{{decryptionMode}} Decryption</h4>
+                </li>
+                <li>
+                  <span>
+                    <input type="radio" id="decrypt_public" name="decryptionType" value="public" v-model="decryptionMode">
+                    <label for="decrypt_public">Public Key</label>
+                  </span>
+                  <span>
+                    <input type="radio" id="decrypt_private" name="decryptionType" value="private" v-model="decryptionMode">
+                    <label for="decrypt_private">Private Key</label>
+                  </span>
                 </li>
                 <li>
                   <label class="input-label linear">
@@ -207,7 +227,7 @@
                       <span class="lbl">암호화 된 데이터(CipherText)</span>
                     </div>
                     <div class="coll right">
-                      <button type="submit" class="btn full submit content-format" @click.prevent="getPriDecryption">Decryption Button</button>
+                      <button type="submit" class="btn full submit content-format" @click.prevent="cryptoControl('decrypt')">Decryption Button</button>
                     </div>
                   </label>
                 </li>
@@ -247,7 +267,10 @@ export default {
       publicKey: "",
       plainText: "",
       cipherText: "",
-      decrypted: ""
+      decrypted: "",
+      encryptionMode: "public",
+      decryptionMode: "private",
+      test: ""
     }
   },
   methods: {
@@ -276,6 +299,42 @@ export default {
         priKey: this.privateKey
       })))
       this.decrypted = obj.decrypted
+    },
+    async getPriEncryption() {
+      const obj = (await(Api.postPriEncryption({
+        data: this.plainText,
+        pubKey: this.publicKey,
+        priKey: this.privateKey
+      })))
+      this.cipherText = obj.cipherText
+    },
+    async getPubDecryption() {
+      const obj = (await(Api.postPubDecryption({
+        data: this.cipherText,
+        pubKey: this.publicKey,
+        priKey: this.privateKey
+      })))
+      this.decrypted = obj.decrypted
+    },
+    async cryptoControl(params) {
+      //controls encryption and decryption
+      if (params === "encrypt") {
+        if (this.encryptionMode === "public") {
+          //do public encryption
+          await this.getPubEncryption()
+        } else if (this.encryptionMode === "private") {
+          //do private encryption
+          await this.getPriEncryption()
+        }  
+      } else if (params === "decrypt") {
+        if (this.decryptionMode === "public") {
+          //do public decryption
+          await this.getPubDecryption()
+        } else if (this.decryptionMode === "private") {
+          //do private decryption
+          await this.getPriDecryption()
+        }
+      }
     },
     goToStep(num) {
       if(num == 2 ) this.getKeyPair()
