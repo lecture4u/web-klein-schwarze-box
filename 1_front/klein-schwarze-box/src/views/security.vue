@@ -270,7 +270,12 @@ export default {
       this.cipherText = obj.cipherText
     },
     async getPriDecryption() {
-      this.decrypted = "def"
+      const obj = (await(Api.postPriDecryption({
+        data: this.cipherText,
+        pubKey: this.publicKey,
+        priKey: this.privateKey
+      })))
+      this.decrypted = obj.decrypted
     },
     goToStep(num) {
       if(num == 2 ) this.getKeyPair()

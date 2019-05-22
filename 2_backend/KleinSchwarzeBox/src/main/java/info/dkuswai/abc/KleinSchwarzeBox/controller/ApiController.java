@@ -92,7 +92,7 @@ public class ApiController {
         HashMap<String, Object> obj = new HashMap<String, Object>();
 
         //data from outside
-        String plainText = params.get("data").toString();
+        String plainText = params.get("data");
         String pubKeyParams = params.get("pubKey");
         String priKeyParams = params.get("priKey");
         
@@ -136,7 +136,7 @@ public class ApiController {
 
     /* Public & Private Key part - private key encryption */
     @GetMapping(value = "/api/prien")
-    private HashMap<String, Object> privateEncryption(@RequestParam HashMap<String, Object> params){
+    private HashMap<String, Object> privateEncryption(@RequestParam HashMap<String, String> params){
         HashMap<String, Object> obj = new HashMap<String, Object>();
         String dataToPrivate = params.get("data").toString();
         //PrivateKey prikey = (PrivateKey)params.get("prikey");
@@ -157,19 +157,31 @@ public class ApiController {
     
     /* Public & Private Key part - private key decryption 
         2019.05.22*/
-    @GetMapping(value = "/api/pride")
-    public HashMap<String, Object> privateDecryption(@RequestParam HashMap<String, Object> params){
-        
+    @PostMapping(value = "/api/pride")
+    public HashMap<String, Object> privateDecryption(@RequestBody HashMap<String, String> params){
+    
+        //return object
         HashMap<String, Object> obj = new HashMap<String, Object>();
-        String hashData = params.get("data").toString();
-        String decryptPrivate = key.decryptTextToPrivate(hashData);
 
+        //data from outside
+        String cipherText = params.get("data").toString();
+        String pubKeyParams = params.get("pubKey");
+        String priKeyParams = params.get("priKey");
+        
+        //instantiate a KeyService class with private/public key from outside in a String format
+        key = new KeyService(pubKeyParams, priKeyParams);
+
+        System.out.println("params::" + params);
+        //decrypt cipherText into decrypted text using private key decryption
+        String decrypted = key.decryptTextToPrivate(cipherText);
         try{
-            obj.put("decryptPrivate", decryptPrivate);
             obj.put("success", true);
-		}catch(Exception e){
-			obj.put("success", false);
+            obj.put("decrypted", decrypted);
+        } catch(Exception e){
+            obj.put("success", false);
+            e.printStackTrace();
         }
+        System.out.println(obj);
         return obj;
     }
 

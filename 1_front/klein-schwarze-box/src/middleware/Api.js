@@ -20,6 +20,7 @@ const RestApi = class {
   async getHash (hash) { return await this.result(axios.get(`${baseURL}/hash?data=${hash}`)) }
   async getKey () { return await this.result(axios.get(`${baseURL}/genkey`)) }
   async postPubEncryption (params) { return await this.result(axios.post(`${baseURL}/puben`, params)) }
+  async postPriDecryption (params) { return await this.result(axios.post(`${baseURL}/pride`, params)) }
 
   //for test
   async getTest () { return await this.result(axios.get(`${baseURL}/test`)) }
