@@ -178,7 +178,7 @@
                       <span class="lbl">암호화 할 값을 입력하세요(PlainText)</span>
                     </div>
                     <div class="coll right">
-                      <button type="submit" class="btn full submit content-format" @click.prevent="testSubmit">Encryption Button</button>
+                      <button type="submit" class="btn full submit content-format" @click.prevent="getPubEncryption">Encryption Button</button>
                     </div>
                   </label>
                 </li>
@@ -188,7 +188,7 @@
                       <span class="pre">
                         <i class="fas fa-pen"></i>
                       </span>
-                      <input type="text" class="full-width" ref="title" v-model="hashed" size="80" required>
+                      <input type="text" class="full-width" ref="title" v-model="cipherText" size="80" required>
                     </div>
                   </label>
                 </li>
@@ -207,7 +207,7 @@
                       <span class="lbl">암호화 된 데이터(CipherText)</span>
                     </div>
                     <div class="coll right">
-                      <button type="submit" class="btn full submit content-format" @click.prevent="testSubmit">Decryption Button</button>
+                      <button type="submit" class="btn full submit content-format" @click.prevent="getPriDecryption">Decryption Button</button>
                     </div>
                   </label>
                 </li>
@@ -217,7 +217,7 @@
                       <span class="pre">
                         <i class="fas fa-pen"></i>
                       </span>
-                      <input type="text" class="full-width" ref="title" v-model="hashed" size="80" required>
+                      <input type="text" class="full-width" ref="title" v-model="decrypted" size="80" required>
                     </div>
                   </label>
                 </li>
@@ -246,7 +246,8 @@ export default {
       privateKey: "",
       publicKey: "",
       plainText: "",
-      cipherText: ""
+      cipherText: "",
+      decrypted: ""
     }
   },
   methods: {
@@ -254,10 +255,17 @@ export default {
       this.hashed = (await Api.getHash(this.toHash)).data
     },
     async getKeyPair() {
-      const priKey = "abc";
-      const pubKey = "def";
-      this.privateKey = priKey;
-      this.publicKey = pubKey;
+      const obj = await Api.getKey()
+      const priKey = obj.prikey
+      const pubKey = obj.pubkey
+      this.privateKey = priKey
+      this.publicKey = pubKey
+    },
+    async getPubEncryption() {
+      this.cipherText = "abc"
+    },
+    async getPriDecryption() {
+      this.decrypted = "def"
     },
     goToStep(num) {
       if(num == 2 ) this.getKeyPair()
