@@ -118,40 +118,59 @@ public class ApiController {
     and publicKey to privateKey on privateDecryption on decryptTextToPrivate. */
     /* Public & Private Key part - public key decryption 
         2019.05.22 */
-    @GetMapping(value = "/api/pubde")
-    public HashMap<String, Object> publicDecryption(@RequestParam HashMap<String, Object> params){
+    @PostMapping(value = "/api/pubde")
+    public HashMap<String, Object> publicDecryption(@RequestBody HashMap<String, String> params){
         
+        //return object
         HashMap<String, Object> obj = new HashMap<String, Object>();
-        String publicKey = params.get("data").toString();
-        String decryptPublic = key.decryptTextToPublic(publicKey);
 
+        //data from outside
+        String cipherText = params.get("data");
+        String pubKeyParams = params.get("pubKey");
+        String priKeyParams = params.get("priKey");
+        
+        //instantiate a KeyService class with private/public key from outside in a String format
+        key = new KeyService(pubKeyParams, priKeyParams);
+
+        System.out.println("params::" + params);
+        //decrypt cipherText into decrypted text using private key decryption
+        String decrypted = key.decryptTextToPublic(cipherText);
         try{
-            obj.put("decryptPublic", decryptPublic);
             obj.put("success", true);
-		}catch(Exception e){
-			obj.put("success", false);
+            obj.put("decrypted", decrypted);
+        } catch(Exception e){
+            obj.put("success", false);
+            e.printStackTrace();
         }
+        System.out.println(obj);
         return obj;
     }
 
     /* Public & Private Key part - private key encryption */
-    @GetMapping(value = "/api/prien")
-    private HashMap<String, Object> privateEncryption(@RequestParam HashMap<String, String> params){
-        HashMap<String, Object> obj = new HashMap<String, Object>();
-        String dataToPrivate = params.get("data").toString();
-        //PrivateKey prikey = (PrivateKey)params.get("prikey");
-        // key = new KeyService();
-        System.out.println(dataToPrivate);
-        String encryptPrivate = key.encryptTextToPrivate(dataToPrivate);
+    @PostMapping(value = "/api/prien")
+    private HashMap<String, Object> privateEncryption(@RequestBody HashMap<String, String> params){
 
+        //return object
+        HashMap<String, Object> obj = new HashMap<String, Object>();
+
+        //data from outside
+        String plainText = params.get("data");
+        String pubKeyParams = params.get("pubKey");
+        String priKeyParams = params.get("priKey");
+        
+        //instantiate a KeyService class with private/public key from outside in a String format
+        key = new KeyService(pubKeyParams, priKeyParams);
+
+        //encryp plainText into cipher text using public key encryption
+        String cipherText = key.encryptTextToPrivate(plainText);
         try{
-            obj.put("encryptPrivate", encryptPrivate);
             obj.put("success", true);
+            obj.put("cipherText", cipherText);
         } catch(Exception e){
             obj.put("success", false);
             e.printStackTrace();
-            //System.out.println("<script>alert('Encryption Error!'); history.go(-1);</script>");
         }
+        System.out.println(obj);
         return obj;
     }
     
