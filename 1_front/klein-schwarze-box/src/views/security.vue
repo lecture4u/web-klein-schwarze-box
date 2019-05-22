@@ -262,7 +262,12 @@ export default {
       this.publicKey = pubKey
     },
     async getPubEncryption() {
-      this.cipherText = "abc"
+      const obj = (await(Api.postPubEncryption({
+        data: this.plainText,
+        pubKey: this.publicKey,
+        priKey: this.privateKey
+      })))
+      this.cipherText = obj.cipherText
     },
     async getPriDecryption() {
       this.decrypted = "def"
