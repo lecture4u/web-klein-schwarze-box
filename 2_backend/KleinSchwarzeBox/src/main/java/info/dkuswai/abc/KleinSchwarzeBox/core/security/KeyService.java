@@ -120,7 +120,7 @@ public class KeyService {
 	public String decryptTextToPublic(String msg) {
 		String message = "";
 		try {
-			cipher.init(Cipher.DECRYPT_MODE, publicKey);
+			cipher.init(Cipher.DECRYPT_MODE, privateKey);
 			Base32 decoder = new Base32();
 			message = new String(cipher.doFinal(decoder.decode(msg)), "UTF-8");
 		} catch (InvalidKeyException | UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException e) {
@@ -131,7 +131,7 @@ public class KeyService {
 	public String decryptTextToPrivate(String msg) {
 		String message = "";
 		try {
-			cipher.init(Cipher.DECRYPT_MODE, privateKey);
+			cipher.init(Cipher.DECRYPT_MODE, publicKey);
 			Base32 decoder = new Base32();
 			message = new String(cipher.doFinal(decoder.decode(msg)), "UTF-8");
 		} catch (InvalidKeyException | UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException e) {
