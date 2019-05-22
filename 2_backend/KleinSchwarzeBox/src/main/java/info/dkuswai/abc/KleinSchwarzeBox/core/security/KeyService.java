@@ -91,22 +91,27 @@ public class KeyService {
 		//if it wanted to encoding and decoding througt its key, this should make keyService instance again
 		//at this point, this method can strongly be utilized.
 		try {
-			
+			//decode using Base64 from java util
+			//because of missing a single or some characters in key can occur during
+			//the casting to String object and vice versa
 			byte[] clearPubKey = Base64.getDecoder().decode(pubKey);
 			byte[] clearPriKey = Base64.getDecoder().decode(priKey);
+
+			//using public key and private key in a byte[], thrown with String
+			//ready to instantiate a KeyService object with those two parameters
 			X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(clearPubKey);
 			PKCS8EncodedKeySpec priSpec = new PKCS8EncodedKeySpec(clearPriKey);
-			
-			
-			/*
-			X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(pubKey);
-			PKCS8EncodedKeySpec priSpec = new PKCS8EncodedKeySpec(priKey);
-			*/
 
+			//generate keys
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			publicKey = keyFactory.generatePublic(pubSpec);
-			privateKey = keyFactory.generatePrivate(priSpec);
+			this.publicKey = keyFactory.generatePublic(pubSpec);
+			this.privateKey = keyFactory.generatePrivate(priSpec);
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			cipher = Cipher.getInstance("RSA");
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
 			e.printStackTrace();
 		}
 		return 0;

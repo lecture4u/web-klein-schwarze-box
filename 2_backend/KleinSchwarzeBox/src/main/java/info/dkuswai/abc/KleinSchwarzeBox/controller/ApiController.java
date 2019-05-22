@@ -1,11 +1,10 @@
 package info.dkuswai.abc.KleinSchwarzeBox.controller;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.HashMap;
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.Base64;
@@ -28,7 +27,7 @@ public class ApiController {
         return obj;
     }
 
-    @GetMapping(value = "/api/hash/**")
+    @GetMapping(value = "/api/hash")
     public HashMap<String, Object> apiHash(@RequestParam HashMap<String, Object> params) {
         
         HashMap<String, Object> obj = new HashMap<String, Object>();
@@ -36,7 +35,7 @@ public class ApiController {
         //get request parameter from application
         //and take "data" key to digest
         System.out.println(params);
-        String data = params.get("sdf").toString();
+        String data = params.get("data").toString();
         obj.put("success", true);
         
         //If there is an error when data hashed by function named generatHashfunction(),
@@ -67,30 +66,11 @@ public class ApiController {
         //And change the value of key named "success". 
         try {
             obj.put("success", true);
-            key = new KeyService();
-            Hash hashfun = new Hash("MD5");
-            //generate public key
-            String pubLabel = hashfun.bytesToString(key.getPublicKey().getEncoded());
-            
-            //generate private key
-            String priLabel = hashfun.bytesToString(key.getPrivateKey().getEncoded());
-            
-            //print public key and private key into json type
-            // obj.put("PublicKey: ", pubLabel);
-            // obj.put("PrivateKey: ", priLabel);
-            obj.put("pubkey", key.getPublicKey().getEncoded());
-            obj.put("pubkey_re", Base64.getEncoder().encodeToString(key.getPublicKey().getEncoded()));
-            obj.put("prikey", key.getPrivateKey().getEncoded());
-            obj.put("prikey_re", Base64.getEncoder().encodeToString(key.getPrivateKey().getEncoded()));
-
-            //for testing KeyService instantiate
-            /*
-            KeyService ks = new KeyService(key.getPublicKey().getEncoded(), key.getPrivateKey().getEncoded());
-            System.out.println(ks.getPublicKey());
-            */
-            // KeyService ks = new KeyService(Base64.getEncoder().encode( key.getPublicKey().getEncoded()), Base64.getEncoder().encode( key.getPrivateKey().getEncoded()));
-            // System.out.println(ks.getPublicKey());
-            
+            //at this moment, instantiating a KeyService object, there a key pair is generated
+            key = new KeyService();         
+            //encoding with Base64 in String for preventing error during the converting   
+            obj.put("pubkey", Base64.getEncoder().encodeToString(key.getPublicKey().getEncoded()));
+            obj.put("prikey", Base64.getEncoder().encodeToString(key.getPrivateKey().getEncoded()));
         } catch(Exception exception) {
                 obj.put("success", false);
                 exception.printStackTrace();
@@ -98,27 +78,30 @@ public class ApiController {
         return obj;
     }
 
-    @GetMapping(value = "/api/puben")
-    private HashMap<String, Object> publicEncryption(@RequestParam HashMap<String, String> params){
+    @PostMapping(value = "/api/puben")
+    private HashMap<String, Object> publicEncryption(@RequestBody HashMap<String, String> params){
+
+        //return object
         HashMap<String, Object> obj = new HashMap<String, Object>();
-        String hashData = params.get("data").toString();
+
+        //data from outside
+        String plainText = params.get("data").toString();
         String pubKeyParams = params.get("pubKey");
         String priKeyParams = params.get("priKey");
-        System.out.println(params);
-        System.out.println(hashData);
-
-        //error
+        
+        //instantiate a KeyService class with private/public key from outside in a String format
         key = new KeyService(pubKeyParams, priKeyParams);
-        System.out.println(key.getPublicKey());
-        //
 
-        String publicKey = key.encryptTextToPublic(hashData);
+        //encryp plainText into cipher text using public key encryption
+        String cipherText = key.encryptTextToPublic(plainText);
         try{
-            obj.put("publicKey", publicKey);
+            obj.put("success", true);
+            obj.put("cipherText", cipherText);
         } catch(Exception e){
             obj.put("success", false);
             e.printStackTrace();
         }
+        System.out.println(obj);
         return obj;
     }
 
