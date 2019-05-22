@@ -224,9 +224,7 @@
 // 		    noncePlusDataField.setText(predata);
 // 		    String hash = generatHashfunction(predata);
 // 		    hasinghashField.setText(hash);
-// 		});
-		
-	   
+// 		});  
 	 
 // 	}
 // 	public void clickItem(MouseEvent event) {
@@ -684,10 +682,9 @@
 // 			}
 // 			walletNumber++;
 // 			tn.getNode().requestFocus();
-// 		}
-		
-		
-// 	}
+// 		}	
+//     }
+    
 // 	private void initTransactionPosition(){
 // 		transactionXpoint =14;
 // 		transactionYpoint =14;
