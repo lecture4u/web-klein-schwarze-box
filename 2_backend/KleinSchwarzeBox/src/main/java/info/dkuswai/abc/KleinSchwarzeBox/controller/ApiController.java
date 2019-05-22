@@ -1,10 +1,12 @@
 package info.dkuswai.abc.KleinSchwarzeBox.controller;
 
+import java.awt.Label;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +24,7 @@ public class ApiController {
     public HashMap<String, Object> apiHome() {
         HashMap<String, Object> obj = new HashMap<String, Object>();
         obj.put("success", true);
-        obj.put("nema", "lee");
+        obj.put("name", "lee");
         return obj;
     }
 
@@ -163,6 +165,23 @@ public class ApiController {
         return obj;
     }
     
+    @GetMapping(value = "/api/noncedata")
+    public HashMap<String, Object> nonceDataHash(@RequestParam HashMap<String, Object> params1, @RequestParam HashMap<String, Object> params2) {
+        HashMap<String, Object> obj = new HashMap<String, Object>();
+
+        System.out.println(params1 + ", " + params2);
+        String noncePlusData = params1.get("data").toString() + params2.get("nonce");
+        try{
+            obj.put("noncedata", noncePlusData);
+            obj.put("hash", generatHashfunction(noncePlusData));
+            obj.put("success", true);
+        }catch (Exception e){
+            obj.put("success", false);
+        }
+        return obj;
+    }
+
+
     /* hash + hash hashing part 
         2019.05.21 */
     @GetMapping(value = "/api/hashplus")
@@ -189,7 +208,7 @@ public class ApiController {
         return obj;
     }
 
-    /* security check and using key part on Box
+    /* security - security check and using key part on Box
        deAndHashing and signatureDe function
        2019.05.22*/
     @GetMapping(value = "/api/datahash")
@@ -231,6 +250,10 @@ public class ApiController {
     public void addTransactionToTransaction(){
         //addTransaction(transactionPane,"transaction");
     }
-
     
+    // @GetMapping(value = "/api/maketree")
+    // public HashMap<String, Object> makeMerkleTree(@RequestParam HashMap<String, Object> params) {
+    //     mekleNodeList = new ArrayList<MerkleNode>();
+    //     System.out.println("Start Making block");
+    //}
 }

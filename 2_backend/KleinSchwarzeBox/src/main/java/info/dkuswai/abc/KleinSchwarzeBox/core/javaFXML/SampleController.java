@@ -224,9 +224,7 @@
 // 		    noncePlusDataField.setText(predata);
 // 		    String hash = generatHashfunction(predata);
 // 		    hasinghashField.setText(hash);
-// 		});
-		
-	   
+// 		});  
 	 
 // 	}
 // 	public void clickItem(MouseEvent event) {
