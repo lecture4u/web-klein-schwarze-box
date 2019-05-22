@@ -112,10 +112,6 @@ public class ApiController {
         return obj;
     }
 
-    /*There is a bug on decryption function.
-    I wrote about bug on BlockChaeEun issue#5, and this is related with bug1.
-    It just need to change privateKey to publicKey on decryptTextToPublic in KeyService.java, 
-    and publicKey to privateKey on privateDecryption on decryptTextToPrivate. */
     /* Public & Private Key part - public key decryption 
         2019.05.22 */
     @PostMapping(value = "/api/pubde")
