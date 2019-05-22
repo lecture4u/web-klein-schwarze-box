@@ -180,24 +180,6 @@ public class ApiController {
         }
         return obj;
     }
-    
-    /* nonce hashing part
-        2019.05.22 */
-    @GetMapping(value = "/api/noncedata")
-    public HashMap<String, Object> nonceDataHash(@RequestParam HashMap<String, Object> params1, @RequestParam HashMap<String, Object> params2) {
-        HashMap<String, Object> obj = new HashMap<String, Object>();
-
-        System.out.println(params1 + ", " + params2);
-        String noncePlusData = params1.get("data").toString() + params2.get("nonce");
-        try{
-            obj.put("noncedata", noncePlusData);
-            obj.put("hash", generatHashfunction(noncePlusData));
-            obj.put("success", true);
-        }catch (Exception e){
-            obj.put("success", false);
-        }
-        return obj;
-    }
 
     /* hash + hash hashing part 
         2019.05.21 */
