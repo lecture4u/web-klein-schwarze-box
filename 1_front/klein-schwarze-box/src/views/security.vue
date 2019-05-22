@@ -129,7 +129,100 @@
             </fieldset>
           </div>
           <div v-show="step === 2">
-            <h4>Sorry! We are work in progress</h4>
+            <fieldset>
+              <legend>SECURITY</legend>
+              <ul class="fields">
+                <li>
+                  <h4>Public Key</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="publicKey" size="80" required>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+              <ul class="fields">
+                <li>
+                  <h4>Private Key</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="privateKey" size="80" required>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+            </fieldset>
+            <fieldset>
+              <legend>SECURITY</legend>
+              <ul class="fields">
+                <li>
+                  <h4>Encryption</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll left">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="plainText" size="80" required>
+                      <span class="lbl">암호화 할 값을 입력하세요(PlainText)</span>
+                    </div>
+                    <div class="coll right">
+                      <button type="submit" class="btn full submit content-format" @click.prevent="testSubmit">Encryption Button</button>
+                    </div>
+                  </label>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="hashed" size="80" required>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+              <ul class="fields">
+                <li>
+                  <h4>Decryption</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="cipherText" size="80" required>
+                      <span class="lbl">암호화 된 데이터(CipherText)</span>
+                    </div>
+                    <div class="coll right">
+                      <button type="submit" class="btn full submit content-format" @click.prevent="testSubmit">Decryption Button</button>
+                    </div>
+                  </label>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="hashed" size="80" required>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+            </fieldset>
           </div>
           <div v-show="step === 3">
             <h4>Sorry! We are work in progress</h4>
@@ -148,15 +241,26 @@ export default {
     return {
       text: "",
       toHash: "",
-      step: 1,
-      hashed: ""
+      step: 2,
+      hashed: "",
+      privateKey: "",
+      publicKey: "",
+      plainText: "",
+      cipherText: ""
     }
   },
   methods: {
     async testSubmit() {
       this.hashed = (await Api.getHash(this.toHash)).data
     },
+    async getKeyPair() {
+      const priKey = "abc";
+      const pubKey = "def";
+      this.privateKey = priKey;
+      this.publicKey = pubKey;
+    },
     goToStep(num) {
+      if(num == 2 ) this.getKeyPair()
       this.step = num;
     }
   }
