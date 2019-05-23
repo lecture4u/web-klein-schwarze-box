@@ -129,7 +129,120 @@
             </fieldset>
           </div>
           <div v-show="step === 2">
-            <h4>Sorry! We are work in progress</h4>
+            <fieldset>
+              <legend>SECURITY</legend>
+              <ul class="fields">
+                <li>
+                  <h4>Public Key</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="publicKey" size="80" required>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+              <ul class="fields">
+                <li>
+                  <h4>Private Key</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="privateKey" size="80" required>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+            </fieldset>
+            <fieldset>
+              <legend>SECURITY</legend>
+              <ul class="fields">
+                <li>
+                  <h4>{{encryptionMode}} Key Encryption</h4>
+                </li>
+                <li>
+                  <span>
+                    <input type="radio" id="encrypt_public" name="encryptionType" value="public" v-model="encryptionMode">
+                    <label for="encrypt_public">Public Key</label>
+                  </span>
+                  <span>
+                    <input type="radio" id="encrypt_private" name="encryptionType" value="private" v-model="encryptionMode">
+                    <label for="encrypt_private">Private Key</label>
+                  </span>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll left">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="plainText" size="80" required>
+                      <span class="lbl">암호화 할 값을 입력하세요(PlainText)</span>
+                    </div>
+                    <div class="coll right">
+                      <button type="submit" class="btn full submit content-format" @click.prevent="cryptoControl('encrypt')">Encryption Button</button>
+                    </div>
+                  </label>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="cipherText" size="80" required>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+              <ul class="fields">
+                <li>
+                  <h4>{{decryptionMode}} Decryption</h4>
+                </li>
+                <li>
+                  <span>
+                    <input type="radio" id="decrypt_public" name="decryptionType" value="public" v-model="decryptionMode">
+                    <label for="decrypt_public">Public Key</label>
+                  </span>
+                  <span>
+                    <input type="radio" id="decrypt_private" name="decryptionType" value="private" v-model="decryptionMode">
+                    <label for="decrypt_private">Private Key</label>
+                  </span>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="cipherText" size="80" required>
+                      <span class="lbl">암호화 된 데이터(CipherText)</span>
+                    </div>
+                    <div class="coll right">
+                      <button type="submit" class="btn full submit content-format" @click.prevent="cryptoControl('decrypt')">Decryption Button</button>
+                    </div>
+                  </label>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="decrypted" size="80" required>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+            </fieldset>
           </div>
           <div v-show="step === 3">
             <h4>Sorry! We are work in progress</h4>
@@ -148,15 +261,83 @@ export default {
     return {
       text: "",
       toHash: "",
-      step: 1,
-      hashed: ""
+      step: 2,
+      hashed: "",
+      privateKey: "",
+      publicKey: "",
+      plainText: "",
+      cipherText: "",
+      decrypted: "",
+      encryptionMode: "public",
+      decryptionMode: "private",
+      test: ""
     }
   },
   methods: {
     async testSubmit() {
       this.hashed = (await Api.getHash(this.toHash)).data
     },
+    async getKeyPair() {
+      const obj = await Api.getKey()
+      const priKey = obj.prikey
+      const pubKey = obj.pubkey
+      this.privateKey = priKey
+      this.publicKey = pubKey
+    },
+    async getPubEncryption() {
+      const obj = (await(Api.postPubEncryption({
+        data: this.plainText,
+        pubKey: this.publicKey,
+        priKey: this.privateKey
+      })))
+      this.cipherText = obj.cipherText
+    },
+    async getPriDecryption() {
+      const obj = (await(Api.postPriDecryption({
+        data: this.cipherText,
+        pubKey: this.publicKey,
+        priKey: this.privateKey
+      })))
+      this.decrypted = obj.decrypted
+    },
+    async getPriEncryption() {
+      const obj = (await(Api.postPriEncryption({
+        data: this.plainText,
+        pubKey: this.publicKey,
+        priKey: this.privateKey
+      })))
+      this.cipherText = obj.cipherText
+    },
+    async getPubDecryption() {
+      const obj = (await(Api.postPubDecryption({
+        data: this.cipherText,
+        pubKey: this.publicKey,
+        priKey: this.privateKey
+      })))
+      this.decrypted = obj.decrypted
+    },
+    async cryptoControl(params) {
+      //controls encryption and decryption
+      if (params === "encrypt") {
+        if (this.encryptionMode === "public") {
+          //do public encryption
+          await this.getPubEncryption()
+        } else if (this.encryptionMode === "private") {
+          //do private encryption
+          await this.getPriEncryption()
+        }  
+      } else if (params === "decrypt") {
+        if (this.decryptionMode === "public") {
+          //do public decryption
+          await this.getPubDecryption()
+        } else if (this.decryptionMode === "private") {
+          //do private decryption
+          await this.getPriDecryption()
+        }
+      }
+    },
     goToStep(num) {
+      if(num == 2 ) this.getKeyPair()
       this.step = num;
     }
   }

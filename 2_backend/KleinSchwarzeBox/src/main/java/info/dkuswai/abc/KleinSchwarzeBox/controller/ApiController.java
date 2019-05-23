@@ -1,13 +1,17 @@
 package info.dkuswai.abc.KleinSchwarzeBox.controller;
 
+import java.awt.Label;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.Base64;
 
 import info.dkuswai.abc.KleinSchwarzeBox.mapper.BasicMapper;
 import info.dkuswai.abc.KleinSchwarzeBox.core.security.*;
@@ -16,17 +20,18 @@ import info.dkuswai.abc.KleinSchwarzeBox.core.security.*;
 public class ApiController {
     @Resource
     BasicMapper basicMapper;
-    KeyService key;
+    private KeyService key ;
+
 
     @GetMapping(value = "/api")
     public HashMap<String, Object> apiHome() {
         HashMap<String, Object> obj = new HashMap<String, Object>();
         obj.put("success", true);
-        obj.put("nema", "lee");
+        obj.put("name", "lee");
         return obj;
     }
 
-    @GetMapping(value = "/api/hash/**")
+    @GetMapping(value = "/api/hash")
     public HashMap<String, Object> apiHash(@RequestParam HashMap<String, Object> params) {
         
         HashMap<String, Object> obj = new HashMap<String, Object>();
@@ -50,6 +55,7 @@ public class ApiController {
         return obj;
     }
 
+    /* Using on generate hash part */
     private String generatHashfunction(String data){
     	Hash hashfun = new Hash("MD5");
     	byte[] hash = hashfun.hashFn(data);
@@ -57,6 +63,7 @@ public class ApiController {
 		return data;
     }
 
+    /* Public & Private Key part - generate key */
     @GetMapping(value = "/api/genkey")
     public HashMap<String, Object> apiGenerateKey(){
         HashMap<String, Object> obj = new HashMap<String, Object>();
@@ -65,29 +72,11 @@ public class ApiController {
         //And change the value of key named "success". 
         try {
             obj.put("success", true);
-            key = new KeyService();
-            Hash hashfun = new Hash("MD5");
-            String pubLabel = hashfun.bytesToString(key.getPublicKey().getEncoded());
-            StringBuffer pubBuffer = new StringBuffer(pubLabel);
-            for(int i =0; i<pubBuffer.length(); i++){
-                if(i%130 == 0){
-                    pubBuffer.insert(i, "\n");
-                }
-            }
-            pubLabel = pubBuffer.toString();
-            
-            String priLabel = hashfun.bytesToString(key.getPrivateKey().getEncoded());
-            StringBuffer priBuffer = new StringBuffer(priLabel);
-            for(int i =0; i<priBuffer.length(); i++){
-                if(i%130== 0){
-                    priBuffer.insert(i, "\n");
-                }
-            }
-            priLabel = priBuffer.toString();
-            
-            obj.put("PublicKey: ", pubLabel);
-            obj.put("PrivateKey: ", priLabel);
-            
+            //at this moment, instantiating a KeyService object, there a key pair is generated
+            key = new KeyService();         
+            //encoding with Base64 in String for preventing error during the converting   
+            obj.put("pubkey", Base64.getEncoder().encodeToString(key.getPublicKey().getEncoded()));
+            obj.put("prikey", Base64.getEncoder().encodeToString(key.getPrivateKey().getEncoded()));
         } catch(Exception exception) {
                 obj.put("success", false);
                 exception.printStackTrace();
@@ -95,74 +84,122 @@ public class ApiController {
         return obj;
     }
 
-    @GetMapping(value = "/api/puben")
-    private HashMap<String, Object> publicEncryption(@RequestParam HashMap<String, Object> params){
-        HashMap<String, Object> obj = new HashMap<String, Object>();
-        String hashData = params.get("data").toString();
-        PublicKey pubkey = (PublicKey)params.get("pubkey");
-        key = new KeyService();
-        System.out.println(hashData);
-        String publicKey = key.encryptTextToPublic(hashData);
+    /* Public & Private Key part - public key encryption */
+    @PostMapping(value = "/api/puben")
+    private HashMap<String, Object> publicEncryption(@RequestBody HashMap<String, String> params){
 
+        //return object
+        HashMap<String, Object> obj = new HashMap<String, Object>();
+
+        //data from outside
+        String plainText = params.get("data");
+        String pubKeyParams = params.get("pubKey");
+        String priKeyParams = params.get("priKey");
+        
+        //instantiate a KeyService class with private/public key from outside in a String format
+        key = new KeyService(pubKeyParams, priKeyParams);
+
+        //encryp plainText into cipher text using public key encryption
+        String cipherText = key.encryptTextToPublic(plainText);
         try{
-            obj.put("publicKey", publicKey);
+            obj.put("success", true);
+            obj.put("cipherText", cipherText);
         } catch(Exception e){
             obj.put("success", false);
             e.printStackTrace();
-            //System.out.println("<script>alert('Encryption Error!'); history.go(-1);</script>");
         }
+        System.out.println(obj);
         return obj;
     }
 
-    /*There is a bug on decryption function.
-    I wrote about bug on BlockChaeEun issue#5, and this is related with bug1.
-    It just need to change privateKey to publicKey on publicDecryption, 
-    and publicKey to privateKey on privateDecryption. */
-    @GetMapping(value = "/api/pubde")
-    private HashMap<String, Object> publicDecryption(@RequestParam HashMap<String, Object> params){
+    /* Public & Private Key part - public key decryption 
+        2019.05.22 */
+    @PostMapping(value = "/api/pubde")
+    public HashMap<String, Object> publicDecryption(@RequestBody HashMap<String, String> params){
+        
+        //return object
         HashMap<String, Object> obj = new HashMap<String, Object>();
 
-        return obj;
-    }
+        //data from outside
+        String cipherText = params.get("data");
+        String pubKeyParams = params.get("pubKey");
+        String priKeyParams = params.get("priKey");
+        
+        //instantiate a KeyService class with private/public key from outside in a String format
+        key = new KeyService(pubKeyParams, priKeyParams);
 
-    @GetMapping(value = "/api/prien")
-    private HashMap<String, Object> privateEncryption(@RequestParam HashMap<String, Object> params){
-        HashMap<String, Object> obj = new HashMap<String, Object>();
-        String dataToPrivate = params.get("data").toString();
-        PrivateKey prikey = (PrivateKey)params.get("prikey");
-        key = new KeyService();
-        System.out.println(dataToPrivate);
-        String privateKey = key.encryptTextToPrivate(dataToPrivate);
-
+        System.out.println("params::" + params);
+        //decrypt cipherText into decrypted text using private key decryption
+        String decrypted = key.decryptTextToPublic(cipherText);
         try{
-            obj.put("prikey", privateKey);
+            obj.put("success", true);
+            obj.put("decrypted", decrypted);
         } catch(Exception e){
             obj.put("success", false);
             e.printStackTrace();
-            //System.out.println("<script>alert('Encryption Error!'); history.go(-1);</script>");
         }
+        System.out.println(obj);
         return obj;
     }
-   
-    @GetMapping(value = "/api/pride")
-    private HashMap<String, Object> privateDecryption(@RequestAttribute(value = "prikey") HashMap<String, Object> params){
-        HashMap<String, Object> obj = new HashMap<String, Object>();
-        String dataFromPrivate = params.get("prikey").toString();
-        // PrivateKey prikey = (PrivateKey)params.get("prikey");
-        // key = new KeyService();
-        System.out.println(dataFromPrivate);
-        String privateKey = key.decryptTextToPrivate(dataFromPrivate);
 
+    /* Public & Private Key part - private key encryption */
+    @PostMapping(value = "/api/prien")
+    private HashMap<String, Object> privateEncryption(@RequestBody HashMap<String, String> params){
+
+        //return object
+        HashMap<String, Object> obj = new HashMap<String, Object>();
+
+        //data from outside
+        String plainText = params.get("data");
+        String pubKeyParams = params.get("pubKey");
+        String priKeyParams = params.get("priKey");
+        
+        //instantiate a KeyService class with private/public key from outside in a String format
+        key = new KeyService(pubKeyParams, priKeyParams);
+
+        //encryp plainText into cipher text using public key encryption
+        String cipherText = key.encryptTextToPrivate(plainText);
         try{
-            obj.put("prikey", privateKey);
+            obj.put("success", true);
+            obj.put("cipherText", cipherText);
         } catch(Exception e){
             obj.put("success", false);
             e.printStackTrace();
-            //System.out.println("<script>alert('Encryption Error!'); history.go(-1);</script>");
         }
+        System.out.println(obj);
         return obj;
     }
     
+    /* Public & Private Key part - private key decryption 
+        2019.05.22*/
+    @PostMapping(value = "/api/pride")
+    public HashMap<String, Object> privateDecryption(@RequestBody HashMap<String, String> params){
+    
+        //return object
+        HashMap<String, Object> obj = new HashMap<String, Object>();
+
+        //data from outside
+        String cipherText = params.get("data").toString();
+        String pubKeyParams = params.get("pubKey");
+        String priKeyParams = params.get("priKey");
+        
+        //instantiate a KeyService class with private/public key from outside in a String format
+        key = new KeyService(pubKeyParams, priKeyParams);
+
+        System.out.println("params::" + params);
+        //decrypt cipherText into decrypted text using private key decryption
+        String decrypted = key.decryptTextToPrivate(cipherText);
+        try{
+            obj.put("success", true);
+            obj.put("decrypted", decrypted);
+        } catch(Exception e){
+            obj.put("success", false);
+            e.printStackTrace();
+        }
+        System.out.println(obj);
+        return obj;
+    }
+
     /* hash + hash hashing part 
         2019.05.21 */
     @GetMapping(value = "/api/hashplus")
@@ -189,8 +226,8 @@ public class ApiController {
         return obj;
     }
 
-    /* security check and using key part on Box
-       deAndHashing and signatureDe function
+    /* security - security check and using key part 
+       deAndHashing function
        2019.05.22*/
     @GetMapping(value = "/api/datahash")
     public HashMap<String, Object> deAndHashing(@RequestParam HashMap<String, Object> params) {
@@ -210,13 +247,15 @@ public class ApiController {
         }
         return obj;
 	}
-
+    /* security - security check and using key part 
+       decrypt a encrypted signature private key 
+       2019.05.22 */
     @GetMapping(value = "/api/signde")
     public HashMap<String, Object> signatureDe(@RequestParam HashMap<String, Object> params) {		
         
         HashMap<String, Object> obj = new HashMap<String, Object>();
         String signature = params.get("data").toString();
-        String deHash = key.decryptTextToPublic(signature);
+        String deHash = key.decryptTextToPrivate(signature);
 
         try{
             obj.put("deHash", deHash);
@@ -231,6 +270,81 @@ public class ApiController {
     public void addTransactionToTransaction(){
         //addTransaction(transactionPane,"transaction");
     }
-
     
+    // @GetMapping(value = "/api/maketree")
+    // public HashMap<String, Object> makeMerkleTree(@RequestParam HashMap<String, Object> params) {
+    //     mekleNodeList = new ArrayList<MerkleNode>();
+    //     System.out.println("Start Making block");
+    //}
+
+    // private void addTransaction(AnchorPane tranPane, String paneName){
+		
+	// 	if(paneName.equals("transaction")){
+	// 		TransactionNode tn = new TransactionNode("Transaction"+transactionNumber,transactionXpoint,transactionYpoint);
+	// 		tn.addToPane(tranPane);
+	// 		transactionFieldList.add(tn.getNode());
+			
+	// 		if(transactionXpoint>200){
+	// 			transactionYpoint +=61;
+	// 			transactionXpoint =14;
+	// 		}
+	// 		else{
+	// 		    transactionXpoint +=200;
+			    
+	// 		}
+	// 		transactionNumber++;
+	// 		tn.getNode().requestFocus();
+	// 	}
+	// 	else if(paneName.equals("wallet1")){
+	// 		TransactionNode tn = new TransactionNode("Transaction"+walletNumber,wallet1Xpoint,wallet1Ypoint);
+	// 		tn.addToPane(tranPane);
+	// 		//wallet1FieldList.add(tn.getNode());
+	// 		allWalletFieldList.add(tn.getNode());
+	// 		allWalletFieldWallet.add("wallet1");
+	// 		if(wallet1Xpoint>400){
+	// 			wallet1Ypoint +=61;
+	// 			wallet1Xpoint =14;
+	// 		}
+	// 		else{
+	// 			wallet1Xpoint +=200;
+			    
+	// 		}
+	// 		walletNumber++;
+	// 		tn.getNode().requestFocus();
+	// 	}
+	// 	else if(paneName.equals("wallet2")){
+	// 		TransactionNode tn = new TransactionNode("Transaction"+walletNumber,wallet2Xpoint,wallet2Ypoint);
+	// 		tn.addToPane(tranPane);
+	// 		//wallet2FieldList.add(tn.getNode());
+	// 		allWalletFieldList.add(tn.getNode());
+	// 		allWalletFieldWallet.add("wallet2");
+	// 		if(wallet2Xpoint>400){
+	// 			wallet2Ypoint +=61;
+	// 			wallet2Xpoint =14;
+	// 		}
+	// 		else{
+	// 			wallet2Xpoint +=200;
+			    
+	// 		}
+	// 		walletNumber++;
+	// 		tn.getNode().requestFocus();
+	// 	}
+	// 	else if(paneName.equals("wallet3")){
+	// 		TransactionNode tn = new TransactionNode("Transaction"+walletNumber,wallet3Xpoint,wallet3Ypoint);
+	// 		tn.addToPane(tranPane);
+	// 		//wallet3FieldList.add(tn.getNode());
+	// 		allWalletFieldList.add(tn.getNode());
+	// 		allWalletFieldWallet.add("wallet3");
+	// 		if(wallet3Xpoint>400){
+	// 			wallet3Ypoint +=61;
+	// 			wallet3Xpoint =14;
+	// 		}
+	// 		else{
+	// 			wallet3Xpoint +=200;
+			    
+	// 		}
+	// 		walletNumber++;
+	// 		tn.getNode().requestFocus();
+	// 	}	
+    // }
 }

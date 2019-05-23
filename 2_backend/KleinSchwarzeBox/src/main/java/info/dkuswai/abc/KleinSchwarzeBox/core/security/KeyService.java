@@ -15,6 +15,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -36,6 +37,10 @@ public class KeyService {
 	
 	KeyService(String fileName) {
 		loadKey(fileName);
+	}
+
+	public KeyService(String pubKey, String priKey) {
+		makeKey(pubKey, priKey);
 	}
 
 	private void genKey(int keyLength) {
@@ -71,6 +76,43 @@ public class KeyService {
 			publicKey = keyFactory.generatePublic(pubSpec);
 			privateKey = keyFactory.generatePrivate(priSpec);
 		} catch (IOException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	public int makeKey(String pubKey, String priKey) {
+		//@Author: @yoseplee
+		//@description:
+		//make key from pubkey and prikey from outside source
+		//this can be utilized for web application which is independent from keyService instance
+		//i.e. a web application based on rest api but want to show key based work,
+		//that application has only public key and private key that had made before
+		//if it wanted to encoding and decoding througt its key, this should make keyService instance again
+		//at this point, this method can strongly be utilized.
+		try {
+			//decode using Base64 from java util
+			//because of missing a single or some characters in key can occur during
+			//the casting to String object and vice versa
+			byte[] clearPubKey = Base64.getDecoder().decode(pubKey);
+			byte[] clearPriKey = Base64.getDecoder().decode(priKey);
+
+			//using public key and private key in a byte[], thrown with String
+			//ready to instantiate a KeyService object with those two parameters
+			X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(clearPubKey);
+			PKCS8EncodedKeySpec priSpec = new PKCS8EncodedKeySpec(clearPriKey);
+
+			//generate keys
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			this.publicKey = keyFactory.generatePublic(pubSpec);
+			this.privateKey = keyFactory.generatePrivate(priSpec);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//make cipher
+		try {
+			cipher = Cipher.getInstance("RSA");
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
 			e.printStackTrace();
 		}
 		return 0;
