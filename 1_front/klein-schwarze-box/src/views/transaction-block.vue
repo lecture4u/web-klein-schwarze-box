@@ -42,7 +42,7 @@
               <label class="input-label">
                 <span class="pre"><i class="fas fa-pen"></i></span>
                 <input type="text" class="full-width" ref="title" v-model="title" size="80" required />
-                <span class="lbl">아이템 이름</span>
+                <span class="lbl">트랜잭션 값을 입력하세요</span>
               </label>
             </li>
             <li>
@@ -85,7 +85,38 @@
             </div>
           </section>
         </fieldset>
+        <div class="btn-group">
+          <button type="button" class="btn default" @click.prevent="">getNonce</button>
+          <button type="button" class="btn default" @click.prevent="">Get Previous Hash</button>
+          <button type="button" class="btn default" @click.prevent="">Add to block</button>
+        </div>
       </form>
+      <ul class="fields">
+          <li>
+            <h4>Block Hash - hash</h4>
+          </li>
+          <li>
+            <label class="input-label">
+              <span class="pre"><i class="fas fa-pen"></i></span>
+              <input type="text" class="full-width" v-model="nonce" size="80" required />
+              <span class="lbl">Nonce(with consensus)</span>
+            </label>
+          </li>
+          <li>
+            <label class="input-label">
+              <span class="pre"><i class="fas fa-pen"></i></span>
+              <input type="text" class="full-width" v-model="prevBlockHash" size="80" required />
+              <span class="lbl">Previous Block Hash</span>
+            </label>
+          </li>
+          <li>
+            <label class="input-label">
+              <span class="pre"><i class="fas fa-pen"></i></span>
+              <input type="text" class="full-width" v-model="merkletreeRoot" size="80" required />
+              <span class="lbl">Merkle Tree Root</span>
+            </label>
+          </li>
+      </ul>
     </div>
   </section>
 </template>
@@ -102,7 +133,10 @@ export default {
         description: '',
         selectedItem: null,
         hashed: '',
-        merkletree: []
+        merkletree: [],
+        nonce: '',
+        prevBlockHash: '',
+        merkletreeRoot: ''
       }
     },
     methods: {
@@ -121,6 +155,10 @@ export default {
       },
       async getHash(params) {
         this.hashed = (await Api.getHash(params)).data
+      },
+      makeMerkleTree() {
+        let obj = []
+        obj.push(0)
       }
     }
   }
