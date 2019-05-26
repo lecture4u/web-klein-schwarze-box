@@ -58,7 +58,7 @@
         </li>
         <li>
           <a href="#" @click.prevent="goToStep(3)">
-            <h4>3. Hash+Hash Hashgin</h4>
+            <h4>3. Hash+Hash Hashing</h4>
           </a>
           <div v-show="step===3">
             <div class="description">
@@ -197,7 +197,96 @@
             </fieldset>
           </div>
           <div v-show="step === 3">
-            <h4>work</h4>
+            <fieldset>
+              <legend>SECURITY</legend>
+              <ul class="fields">
+                <li>
+                  <h4>Data</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll left">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="toHash" size="80" required>
+                      <span class="lbl">값을 입력하세요</span>
+                    </div>
+                    <div class="coll right">
+                      <button type="submit" class="btn full submit content-format" @click.prevent="getHash(toHash)">Generate Hash</button>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+              <ul class="fields">
+                <li>
+                  <h4>Hash</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="hashed" size="80" required>
+                      <span class="lbl">Hash된 결과(Digested)</span>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+            </fieldset>
+            <fieldset>
+              <legend>SECURITY</legend>
+              <ul class="fields">
+                <li>
+                  <h4>Hash1</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll left">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="data" size="80" required>
+                      <span class="lbl">값을 입력하세요</span>
+                    </div>
+                  </label>
+                </li>
+                <li>
+                  <h4>Hash2</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll left">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="data2" size="80" required>
+                      <span class="lbl">값을 입력하세요</span>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+              <ul class="fields">
+                <li>
+                  <h4>Result Hash(Hash of Hashes)</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="hashofhash" size="80" required>
+                      <span class="lbl">Hash된 결과(Digested)</span>
+                    </div>
+                    <div class="coll right">
+                      <button type="submit" class="btn full submit content-format" @click.prevent="getHashofhash(concat(data, data2))">Generate Hash</button>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+            </fieldset>
           </div>
         </div>
       </form>
@@ -212,15 +301,23 @@ export default {
   data() {
     return {
       data: "",
+      data2: "",
       nonce: 0,
       toHash: "",
       hashed: "",
-      step: 2
+      hashofhash: "",
+      step: 3
     }
   },
   methods: {
     async getHash(params) {
       this.hashed = (await Api.getHash(params)).data
+    },
+    async getHashofhash(params) {
+      this.hashofhash = (await Api.getHash(params)).data
+    },
+    concat(str1, str2) {
+      return str1+''+str2
     },
     goToStep(num) {
       this.step = num;
