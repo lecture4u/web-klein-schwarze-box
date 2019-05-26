@@ -105,7 +105,7 @@
                       <span class="lbl">값을 입력하세요</span>
                     </div>
                     <div class="coll right">
-                      <button type="submit" class="btn full submit content-format" @click.prevent="testSubmit">Generate Hash</button>
+                      <button type="submit" class="btn full submit content-format" @click.prevent="getHash">Generate Hash</button>
                     </div>
                   </label>
                 </li>
@@ -293,6 +293,9 @@
                       <input type="text" class="full-width" ref="title" v-model="plainText" size="80" required>
                       <span class="lbl">상대방에게 전송할 데이터를 입력하세요</span>
                     </div>
+                    <div class="coll right">
+                      <button type="submit" class="btn full submit content-format" @click.prevent="getHash">Generate Hash</button>
+                    </div>
                   </label>
                 </li>
                 <li>
@@ -301,11 +304,11 @@
                       <span class="pre">
                         <i class="fas fa-pen"></i>
                       </span>
-                      <input type="text" class="full-width" ref="title" v-model="Hashed" size="80" required>
+                      <input type="text" class="full-width" ref="title" v-model="hashed" size="80" required>
                       <span class="lbl">전송할 데이터의 Hash값입니다</span>
                     </div>
                     <div class="coll right">
-                      <button type="submit" class="btn full submit content-format" @click.prevent="">Generate Signature</button>
+                      <button type="submit" class="btn full submit content-format" @click.prevent="generateSignature">Generate Signature</button>
                     </div>
                   </label>
                 </li>
@@ -357,7 +360,7 @@
                       <span class="lbl">Received Digital Signature</span>
                     </div>
                     <div class="coll right">
-                      <button type="submit" class="btn full submit content-format" @click.prevent="cryptoControl('decrypt')">Check Signature</button>
+                      <button type="submit" class="btn full submit content-format" @click.prevent="getPubDecryption">Check Signature</button>
                     </div>
                   </label>
                 </li>
@@ -402,7 +405,7 @@ export default {
     }
   },
   methods: {
-    async testSubmit() {
+    async getHash() {
       this.hashed = (await Api.getHash(this.toHash)).data
     },
     async getKeyPair() {
@@ -443,6 +446,14 @@ export default {
         priKey: this.privateKey
       })))
       this.decrypted = obj.decrypted
+    },
+    async generateSignature() {
+      const obj = (await(Api.postPriEncryption({
+        data: this.hashed,
+        pubKey: this.publicKey,
+        priKey: this.privateKey
+      })))
+      this.cipherText = obj.cipherText
     },
     async cryptoControl(params) {
       //controls encryption and decryption
