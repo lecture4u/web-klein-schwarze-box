@@ -13,6 +13,11 @@ Vue.prototype.getDateFormat = dateString => {
 }
 Vue.prototype.contentPreview = (text, limit) => text.length > limit ? text.substring(0, limit) + '...' : text
 
+Vue.prototype.getNow = () => {
+	const date = new Date()
+	return moment(date).format('YYYY-MM-DD HH:mm:ss')
+}
+
 new Vue({
   router,
   store,
