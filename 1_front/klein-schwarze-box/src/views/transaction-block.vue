@@ -36,7 +36,7 @@
         <fieldset><legend>트랜잭션 생성</legend>
           <ul class="fields">
             <li>
-              <h4>트랜잭션 생성</h4>
+              <h4>트랜잭션 생성 #{{Object.keys(list).length + 1}}</h4>
             </li>
             <li>
               <label class="input-label">
@@ -61,21 +61,24 @@
                   </colgroup>
                   <thead>
                     <tr>
-                      <th v-for="(lbl, k) in ['트랜잭션 번호', '값']" :key="k" v-html="lbl" />
+                      <th v-for="(lbl, k) in ['트랜잭션 번호', '값', 'Hash']" :key="k" v-html="lbl" />
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(v, k) in list" :key="k" @click.prevent="selectItem(k)" :class="{active: selectedItem === k}">
                       <td v-html="k + 1" />
                       <td>
-                        <span class="color-label" :style="`background:${v.color}`"></span>
                         {{v.title}}
                       </td>
                       <td v-html="contentPreview(v.description, 40)" />
+                      <td v-html="contentPreview(v.hashed, 40)" />
                     </tr>
                   </tbody>
                 </table>
               </li>
+              <li>
+              <button type="submit" class="btn full submit" @click.prevent="">Merkle Tree 생성하기</button>
+            </li>
             </ul>
             <div class="btn-group center btm" v-if="selectedItem !== null">
               <button type="button" class="btn delete" @click.prevent="deleteItem">삭제하기</button>
@@ -88,10 +91,9 @@
 </template>
 
 <script>
-// import Api from '@/middleware/Api'
+import Api from '@/middleware/Api'
 export default {
     created (){ 
-      this.setColor()
     },
     data () {
       return {
@@ -99,12 +101,15 @@ export default {
         list: [],
         description: '',
         selectedItem: null,
+        hashed: '',
+        merkletree: []
       }
     },
     methods: {
-      insertItem () {
-        const {title, description, reg_date = this.getNow()} = this.$data
-        this.list.push({title, description, reg_date})
+      async insertItem () {
+        await this.getHash(this.title)
+        const {title, description, hashed} = this.$data
+        this.list.push({title, description, hashed})
         this.title = this.description = ''
         this.$refs.title.focus()
       },
@@ -113,6 +118,9 @@ export default {
         this.list.splice(this.selectedItem, 1)
         this.selectedItem = null
         this.setColor()
+      },
+      async getHash(params) {
+        this.hashed = (await Api.getHash(params)).data
       }
     }
   }
