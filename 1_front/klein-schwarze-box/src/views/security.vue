@@ -392,7 +392,7 @@ export default {
     return {
       text: "",
       toHash: "",
-      step: 3,
+      step: 1,
       hashed: "",
       privateKey: "",
       publicKey: "",
