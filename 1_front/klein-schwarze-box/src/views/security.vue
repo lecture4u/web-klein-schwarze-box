@@ -105,7 +105,7 @@
                       <span class="lbl">값을 입력하세요</span>
                     </div>
                     <div class="coll right">
-                      <button type="submit" class="btn full submit content-format" @click.prevent="testSubmit">Generate Hash</button>
+                      <button type="submit" class="btn full submit content-format" @click.prevent="getHash">Generate Hash</button>
                     </div>
                   </label>
                 </li>
@@ -245,7 +245,138 @@
             </fieldset>
           </div>
           <div v-show="step === 3">
-            <h4>Sorry! We are work in progress</h4>
+            <fieldset>
+              <legend>Asymmetric Key Generation</legend>
+              <ul class="fields">
+                <li>
+                  <h4>Public Key</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="publicKey" size="80" required>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+              <ul class="fields">
+                <li>
+                  <h4>Private Key</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="privateKey" size="80" required>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+            </fieldset>
+            <fieldset>
+              <legend>DITIGAL SIGNATURE</legend>
+              <ul class="fields">
+                <li>
+                  <h4>Sender</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll left">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="plainText" size="80" required>
+                      <span class="lbl">상대방에게 전송할 데이터를 입력하세요</span>
+                    </div>
+                    <div class="coll right">
+                      <button type="submit" class="btn full submit content-format" @click.prevent="getHash">Generate Hash</button>
+                    </div>
+                  </label>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll left">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="hashed" size="80" required>
+                      <span class="lbl">전송할 데이터의 Hash값입니다</span>
+                    </div>
+                    <div class="coll right">
+                      <button type="submit" class="btn full submit content-format" @click.prevent="generateSignature">Generate Signature</button>
+                    </div>
+                  </label>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="cipherText" size="80" required>
+                      <span class="lbl">생성된 Digital Signature</span>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+              <ul class="fields">
+                <li>
+                  <h4>Receiver</h4>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="plainText" size="80" required>
+                      <span class="lbl">Received Data</span>
+                    </div>                    
+                  </label>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="hashed" size="80" required>
+                      <span class="lbl">Hash of received data</span>
+                    </div>                    
+                  </label>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="cipherText" size="80" required>
+                      <span class="lbl">Received Digital Signature</span>
+                    </div>
+                    <div class="coll right">
+                      <button type="submit" class="btn full submit content-format" @click.prevent="getPubDecryption">Check Signature</button>
+                    </div>
+                  </label>
+                </li>
+                <li>
+                  <label class="input-label linear">
+                    <div class="coll">
+                      <span class="pre">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <input type="text" class="full-width" ref="title" v-model="decrypted" size="80" required>
+                      <span class="lbl">Decrypted Digital Signature</span>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+            </fieldset>
           </div>
         </div>
       </form>
@@ -261,7 +392,7 @@ export default {
     return {
       text: "",
       toHash: "",
-      step: 2,
+      step: 3,
       hashed: "",
       privateKey: "",
       publicKey: "",
@@ -274,7 +405,7 @@ export default {
     }
   },
   methods: {
-    async testSubmit() {
+    async getHash() {
       this.hashed = (await Api.getHash(this.toHash)).data
     },
     async getKeyPair() {
@@ -316,6 +447,14 @@ export default {
       })))
       this.decrypted = obj.decrypted
     },
+    async generateSignature() {
+      const obj = (await(Api.postPriEncryption({
+        data: this.hashed,
+        pubKey: this.publicKey,
+        priKey: this.privateKey
+      })))
+      this.cipherText = obj.cipherText
+    },
     async cryptoControl(params) {
       //controls encryption and decryption
       if (params === "encrypt") {
@@ -337,7 +476,7 @@ export default {
       }
     },
     goToStep(num) {
-      if(num == 2 ) this.getKeyPair()
+      if(num == 2 | num == 3) this.getKeyPair()
       this.step = num;
     }
   }
