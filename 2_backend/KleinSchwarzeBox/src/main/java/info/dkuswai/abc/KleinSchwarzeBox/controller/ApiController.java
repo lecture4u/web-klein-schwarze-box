@@ -1,16 +1,21 @@
 package info.dkuswai.abc.KleinSchwarzeBox.controller;
 
 import java.util.HashMap;
+import java.util.Random;
+
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
 import java.util.Base64;
 
 import info.dkuswai.abc.KleinSchwarzeBox.mapper.BasicMapper;
 import info.dkuswai.abc.KleinSchwarzeBox.core.security.*;
+import info.dkuswai.abc.KleinSchwarzeBox.core.tinyBlackBox.TinyBlock;
 
 @RestController
 public class ApiController {
@@ -262,5 +267,37 @@ public class ApiController {
         return obj;
     }
     
-    
+    @PostMapping(value = "/api/transaction")
+    public HashMap<String, Object> transaction(@RequestBody HashMap<String, HashMap<String, String>> params) {
+        HashMap<String, Object> obj = new HashMap<String, Object>();
+        Random doRand = new Random();
+        TinyBlock myBlock = new TinyBlock("MD5");
+
+        //need to instantiate a complete tinyBlock
+        //1. transaction list <- params
+        //2. a number of transaction list
+
+        ArrayList<String> transactionList = new ArrayList<String>();
+        
+        //add transaction list from request params
+        HashMap<String, String> transactionFromParams = (HashMap<String, String>)params.get("transaction");
+        transactionList.addAll(transactionFromParams.values());
+
+        String[] transactions = new String[transactionList.size()];
+        transactionList.toArray(transactions);
+
+        //I don't why yet but guess what related to binary tree structure
+        int merkleCount = 2;
+        while(merkleCount < transactionList.size()) {
+            merkleCount *= 2;
+        }
+
+        byte[] buffer = new byte[merkleCount];
+        doRand.nextBytes(buffer);
+        myBlock.setNonce(buffer);
+        myBlock.setPreviousBlockHash(buffer);
+        myBlock.buildBlock();
+        
+        return obj;
+    }
 }
