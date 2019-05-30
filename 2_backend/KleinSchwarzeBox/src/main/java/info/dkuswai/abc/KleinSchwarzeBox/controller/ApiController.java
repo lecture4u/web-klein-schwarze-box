@@ -280,14 +280,23 @@ public class ApiController {
         //1. transaction list <- params
         //2. a number of transaction list
 
-        ArrayList<String> transactionList = new ArrayList<String>();
-        
-        //add transaction list from request params
-        HashMap<String, String> transactionFromParams = (HashMap<String, String>)params.get("data");
-        transactionList.addAll(transactionFromParams.values());
+        ArrayList<HashMap<String, String>> transactionList = (ArrayList<HashMap<String, String>>)params.get("data");
 
-        String[] transactions = new String[transactionList.size()];
-        transactionList.toArray(transactions);
+        //params data example below 
+        //{data=[{title=1, description=, hashed=c4ca4238a0b923820dcc509a6f75849b}, 
+        //{title=3, description=, hashed=eccbc87e4b5ce2fe28308fd9f2a7baf3}, 
+        //{title=2, description=, hashed=c81e728d9d4c2f636f067f89cc14862c}]}
+
+        System.out.println("TEST::" + transactionList.get(0).get("title"));
+        
+        
+        int transactionSize = transactionList.size();
+        String[] transactions = new String[transactionSize];
+        //import into transactions from messageList
+        for(int i = 0; i < transactionSize; i++) {
+            transactions[i] = transactionList.get(i).get("title");
+        }
+                
         myBlock.setMessages(transactions);
 
         //I don't why yet but guess what related to binary tree structure
@@ -304,7 +313,7 @@ public class ApiController {
 
         byte[][] blockHead = myBlock.getHead();
         obj.put("nonce", blockHead[0]);
-        obj.put("prevBlockHash", blockHead[1]);
+        obj.put("previousBlockHash", blockHead[1]);
         obj.put("merkleTreeRoot", blockHead[2]);
         
         return obj;

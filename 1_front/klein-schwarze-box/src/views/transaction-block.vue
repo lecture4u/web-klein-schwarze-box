@@ -77,7 +77,7 @@
                 </table>
               </li>
               <li>
-              <button type="submit" class="btn full submit" @click.prevent="">Merkle Tree 생성하기</button>
+              <button type="submit" class="btn full submit" @click.prevent="postTransaction()">Merkle Tree 생성하기</button>
             </li>
             </ul>
             <div class="btn-group center btm" v-if="selectedItem !== null">
@@ -112,7 +112,7 @@
           <li>
             <label class="input-label">
               <span class="pre"><i class="fas fa-pen"></i></span>
-              <input type="text" class="full-width" v-model="merkletreeRoot" size="80" required />
+              <input type="text" class="full-width" v-model="merkleTreeRoot" size="80" required />
               <span class="lbl">Merkle Tree Root</span>
             </label>
           </li>
@@ -136,7 +136,8 @@ export default {
         merkletree: [],
         nonce: '',
         prevBlockHash: '',
-        merkletreeRoot: ''
+        merkleTreeRoot: '',
+        blockHeader: []
       }
     },
     methods: {
@@ -159,6 +160,21 @@ export default {
       makeMerkleTree() {
         let obj = []
         obj.push(0)
+      },
+      async postTransaction() {
+        const obj = (await(Api.postTransaction({
+          data: this.list
+        })))
+        this.nonce = obj.nonce //for test
+      },
+      getNonce() {
+        this.nonce = this.blockHeader.nonce
+      },
+      getPreviousBlockHash() {
+        this.prevBlockHash = this.blockHeader.previousBlockHash
+      },
+      getMerkleRoot() {
+        this.merkleTreeRoot = this.blockHeader.merkleTreeRoot
       }
     }
   }
