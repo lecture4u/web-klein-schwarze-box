@@ -268,7 +268,10 @@ public class ApiController {
     }
     
     @PostMapping(value = "/api/transaction")
-    public HashMap<String, Object> transaction(@RequestBody HashMap<String, HashMap<String, String>> params) {
+    public HashMap<String, Object> transaction(@RequestBody HashMap<String, Object> params) {
+
+        System.out.println(params);
+
         HashMap<String, Object> obj = new HashMap<String, Object>();
         Random doRand = new Random();
         TinyBlock myBlock = new TinyBlock("MD5");
@@ -280,11 +283,12 @@ public class ApiController {
         ArrayList<String> transactionList = new ArrayList<String>();
         
         //add transaction list from request params
-        HashMap<String, String> transactionFromParams = (HashMap<String, String>)params.get("transaction");
+        HashMap<String, String> transactionFromParams = (HashMap<String, String>)params.get("data");
         transactionList.addAll(transactionFromParams.values());
 
         String[] transactions = new String[transactionList.size()];
         transactionList.toArray(transactions);
+        myBlock.setMessages(transactions);
 
         //I don't why yet but guess what related to binary tree structure
         int merkleCount = 2;
@@ -297,6 +301,11 @@ public class ApiController {
         myBlock.setNonce(buffer);
         myBlock.setPreviousBlockHash(buffer);
         myBlock.buildBlock();
+
+        byte[][] blockHead = myBlock.getHead();
+        obj.put("nonce", blockHead[0]);
+        obj.put("prevBlockHash", blockHead[1]);
+        obj.put("merkleTreeRoot", blockHead[2]);
         
         return obj;
     }

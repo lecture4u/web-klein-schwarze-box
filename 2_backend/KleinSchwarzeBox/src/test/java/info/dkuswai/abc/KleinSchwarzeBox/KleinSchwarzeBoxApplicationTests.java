@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import org.junit.After;
@@ -93,6 +94,38 @@ public class KleinSchwarzeBoxApplicationTests {
 		
 		System.out.println(myBlock.toString());
 		assertEquals("abcasdf", outContent.toString());
+	}
+
+	@Test
+	public void tinyBlockInitFromReqParams() {
+		HashMap<String, String> transactionList = new HashMap<String, String>();
+		Random doRand = new Random();
+		transactionList.put("transaction0", "a");
+		transactionList.put("transaction1", "b");
+		transactionList.put("transaction2", "c");
+		transactionList.put("transaction3", "d");
+
+		String[] transactions = new String[transactionList.size()];
+		
+		transactionList.values().toArray(transactions);
+
+		/*
+		System.out.println(transactions[0]);
+		assertEquals("b", outContent.toString());
+		*/
+		
+		int merkleCount = 2;
+		while(merkleCount < transactionList.size()) {
+			merkleCount *= 2;
+		}
+		byte[] buffer = new byte[merkleCount];
+		doRand.nextBytes(buffer);
+		
+		TinyBlock myBlock = new TinyBlock("MD5");
+		myBlock.setMessages(transactions);
+		myBlock.setNonce(buffer);
+		myBlock.setPreviousBlockHash(buffer);
+		myBlock.buildBlock();
 	}
 
 }
