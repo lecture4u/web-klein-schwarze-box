@@ -86,9 +86,9 @@
           </section>
         </fieldset>
         <div class="btn-group">
-          <button type="button" class="btn default" @click.prevent="">getNonce</button>
-          <button type="button" class="btn default" @click.prevent="">Get Previous Hash</button>
-          <button type="button" class="btn default" @click.prevent="">Add to block</button>
+          <button type="button" class="btn default" @click.prevent="getNonce()">getNonce</button>
+          <button type="button" class="btn default" @click.prevent="getPreviousBlockHash()">Get Previous Hash</button>
+          <button type="button" class="btn default" @click.prevent="getMerkleRoot()">Add to block</button>
         </div>
       </form>
       <ul class="fields">
@@ -145,7 +145,7 @@ export default {
         await this.getHash(this.title)
         const {title, description, hashed} = this.$data
         this.list.push({title, description, hashed})
-        this.title = this.description = ''
+        this.title = this.description = this.hashed = ''
         this.$refs.title.focus()
       },
       selectItem (key) { this.selectedItem = this.selectedItem === key ? null  : key },
@@ -156,6 +156,7 @@ export default {
       },
       async getHash(params) {
         this.hashed = (await Api.getHash(params)).data
+        return this.hashed
       },
       makeMerkleTree() {
         let obj = []
@@ -165,13 +166,14 @@ export default {
         const obj = (await(Api.postTransaction({
           data: this.list
         })))
-        this.nonce = obj.nonce //for test
+        this.blockHeader = obj;
       },
       getNonce() {
         this.nonce = this.blockHeader.nonce
       },
-      getPreviousBlockHash() {
-        this.prevBlockHash = this.blockHeader.previousBlockHash
+      async getPreviousBlockHash() {
+        const buffer = this.blockHeader.previousBlockHash
+        this.prevBlockHash = await this.getHash(buffer)
       },
       getMerkleRoot() {
         this.merkleTreeRoot = this.blockHeader.merkleTreeRoot

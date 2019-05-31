@@ -270,8 +270,8 @@ public class ApiController {
     @PostMapping(value = "/api/transaction")
     public HashMap<String, Object> transaction(@RequestBody HashMap<String, Object> params) {
 
-        System.out.println(params);
-
+        System.out.println("PARAMS:: "+params);
+        
         HashMap<String, Object> obj = new HashMap<String, Object>();
         Random doRand = new Random();
         TinyBlock myBlock = new TinyBlock("MD5");
@@ -312,6 +312,7 @@ public class ApiController {
         myBlock.buildBlock();
 
         byte[][] blockHead = myBlock.getHead();
+        obj.put("success", true);
         obj.put("nonce", blockHead[0]);
         obj.put("previousBlockHash", blockHead[1]);
         obj.put("merkleTreeRoot", blockHead[2]);
