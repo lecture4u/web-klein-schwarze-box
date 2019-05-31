@@ -172,8 +172,9 @@ export default {
         this.nonce = this.blockHeader.nonce
       },
       async getPreviousBlockHash() {
-        const buffer = this.blockHeader.previousBlockHash
-        this.prevBlockHash = await this.getHash(buffer)
+        // const buffer = this.blockHeader.previousBlockHash
+        // this.prevBlockHash = await this.getHash(buffer)
+        this.prevBlockHash = this.blockHeader.previousBlockHash
       },
       getMerkleRoot() {
         this.merkleTreeRoot = this.blockHeader.merkleTreeRoot

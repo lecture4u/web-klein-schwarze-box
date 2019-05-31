@@ -270,8 +270,6 @@ public class ApiController {
     @PostMapping(value = "/api/transaction")
     public HashMap<String, Object> transaction(@RequestBody HashMap<String, Object> params) {
 
-        System.out.println("PARAMS:: "+params);
-        
         HashMap<String, Object> obj = new HashMap<String, Object>();
         Random doRand = new Random();
         TinyBlock myBlock = new TinyBlock("MD5");
@@ -280,15 +278,11 @@ public class ApiController {
         //1. transaction list <- params
         //2. a number of transaction list
 
-        ArrayList<HashMap<String, String>> transactionList = (ArrayList<HashMap<String, String>>)params.get("data");
-
         //params data example below 
         //{data=[{title=1, description=, hashed=c4ca4238a0b923820dcc509a6f75849b}, 
         //{title=3, description=, hashed=eccbc87e4b5ce2fe28308fd9f2a7baf3}, 
         //{title=2, description=, hashed=c81e728d9d4c2f636f067f89cc14862c}]}
-
-        System.out.println("TEST::" + transactionList.get(0).get("title"));
-        
+        ArrayList<HashMap<String, String>> transactionList = (ArrayList<HashMap<String, String>>)params.get("data");
         
         int transactionSize = transactionList.size();
         String[] transactions = new String[transactionSize];
@@ -307,9 +301,12 @@ public class ApiController {
 
         byte[] buffer = new byte[merkleCount];
         doRand.nextBytes(buffer);
+
+        //setting up a block
         myBlock.setNonce(buffer);
-        myBlock.setPreviousBlockHash(buffer);
+        myBlock.setPreviousBlockHash(myBlock.hashFn(buffer));
         myBlock.buildBlock();
+        System.out.println(myBlock);
 
         byte[][] blockHead = myBlock.getHead();
         obj.put("success", true);
