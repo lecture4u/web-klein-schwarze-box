@@ -313,6 +313,7 @@ public class ApiController {
         obj.put("nonce", myBlock.bytesToString(blockHead[0]));
         obj.put("previousBlockHash", myBlock.bytesToString(blockHead[1]));
         obj.put("merkleTreeRoot", myBlock.bytesToString(blockHead[2]));
+        //tree structure also have to be sent later
         
         return obj;
     }
