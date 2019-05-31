@@ -310,9 +310,9 @@ public class ApiController {
 
         byte[][] blockHead = myBlock.getHead();
         obj.put("success", true);
-        obj.put("nonce", blockHead[0]);
-        obj.put("previousBlockHash", blockHead[1]);
-        obj.put("merkleTreeRoot", blockHead[2]);
+        obj.put("nonce", myBlock.bytesToString(blockHead[0]));
+        obj.put("previousBlockHash", myBlock.bytesToString(blockHead[1]));
+        obj.put("merkleTreeRoot", myBlock.bytesToString(blockHead[2]));
         
         return obj;
     }
