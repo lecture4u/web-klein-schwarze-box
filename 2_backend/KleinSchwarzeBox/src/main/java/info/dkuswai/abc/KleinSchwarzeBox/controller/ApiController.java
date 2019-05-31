@@ -1,16 +1,21 @@
 package info.dkuswai.abc.KleinSchwarzeBox.controller;
 
 import java.util.HashMap;
+import java.util.Random;
+
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
 import java.util.Base64;
 
 import info.dkuswai.abc.KleinSchwarzeBox.mapper.BasicMapper;
 import info.dkuswai.abc.KleinSchwarzeBox.core.security.*;
+import info.dkuswai.abc.KleinSchwarzeBox.core.tinyBlackBox.TinyBlock;
 
 @RestController
 public class ApiController {
@@ -262,85 +267,54 @@ public class ApiController {
         return obj;
     }
     
-    /*wallet - addTransaction() and rockToChain()*/
-    public void addTransactionToTransaction(){
-        //addTransaction(transactionPane,"transaction");
-    }
-    
-    // @GetMapping(value = "/api/maketree")
-    // public HashMap<String, Object> makeMerkleTree(@RequestParam HashMap<String, Object> params) {
-    //     mekleNodeList = new ArrayList<MerkleNode>();
-    //     System.out.println("Start Making block");
-    //}
+    @PostMapping(value = "/api/transaction")
+    public HashMap<String, Object> transaction(@RequestBody HashMap<String, Object> params) {
 
-    // private void addTransaction(AnchorPane tranPane, String paneName){
-		
-	// 	if(paneName.equals("transaction")){
-	// 		TransactionNode tn = new TransactionNode("Transaction"+transactionNumber,transactionXpoint,transactionYpoint);
-	// 		tn.addToPane(tranPane);
-	// 		transactionFieldList.add(tn.getNode());
-			
-	// 		if(transactionXpoint>200){
-	// 			transactionYpoint +=61;
-	// 			transactionXpoint =14;
-	// 		}
-	// 		else{
-	// 		    transactionXpoint +=200;
-			    
-	// 		}
-	// 		transactionNumber++;
-	// 		tn.getNode().requestFocus();
-	// 	}
-	// 	else if(paneName.equals("wallet1")){
-	// 		TransactionNode tn = new TransactionNode("Transaction"+walletNumber,wallet1Xpoint,wallet1Ypoint);
-	// 		tn.addToPane(tranPane);
-	// 		//wallet1FieldList.add(tn.getNode());
-	// 		allWalletFieldList.add(tn.getNode());
-	// 		allWalletFieldWallet.add("wallet1");
-	// 		if(wallet1Xpoint>400){
-	// 			wallet1Ypoint +=61;
-	// 			wallet1Xpoint =14;
-	// 		}
-	// 		else{
-	// 			wallet1Xpoint +=200;
-			    
-	// 		}
-	// 		walletNumber++;
-	// 		tn.getNode().requestFocus();
-	// 	}
-	// 	else if(paneName.equals("wallet2")){
-	// 		TransactionNode tn = new TransactionNode("Transaction"+walletNumber,wallet2Xpoint,wallet2Ypoint);
-	// 		tn.addToPane(tranPane);
-	// 		//wallet2FieldList.add(tn.getNode());
-	// 		allWalletFieldList.add(tn.getNode());
-	// 		allWalletFieldWallet.add("wallet2");
-	// 		if(wallet2Xpoint>400){
-	// 			wallet2Ypoint +=61;
-	// 			wallet2Xpoint =14;
-	// 		}
-	// 		else{
-	// 			wallet2Xpoint +=200;
-			    
-	// 		}
-	// 		walletNumber++;
-	// 		tn.getNode().requestFocus();
-	// 	}
-	// 	else if(paneName.equals("wallet3")){
-	// 		TransactionNode tn = new TransactionNode("Transaction"+walletNumber,wallet3Xpoint,wallet3Ypoint);
-	// 		tn.addToPane(tranPane);
-	// 		//wallet3FieldList.add(tn.getNode());
-	// 		allWalletFieldList.add(tn.getNode());
-	// 		allWalletFieldWallet.add("wallet3");
-	// 		if(wallet3Xpoint>400){
-	// 			wallet3Ypoint +=61;
-	// 			wallet3Xpoint =14;
-	// 		}
-	// 		else{
-	// 			wallet3Xpoint +=200;
-			    
-	// 		}
-	// 		walletNumber++;
-	// 		tn.getNode().requestFocus();
-	// 	}	
-    // }
+        HashMap<String, Object> obj = new HashMap<String, Object>();
+        Random doRand = new Random();
+        TinyBlock myBlock = new TinyBlock("MD5");
+
+        //need to instantiate a complete tinyBlock
+        //1. transaction list <- params
+        //2. a number of transaction list
+
+        //params data example below 
+        //{data=[{title=1, description=, hashed=c4ca4238a0b923820dcc509a6f75849b}, 
+        //{title=3, description=, hashed=eccbc87e4b5ce2fe28308fd9f2a7baf3}, 
+        //{title=2, description=, hashed=c81e728d9d4c2f636f067f89cc14862c}]}
+        ArrayList<HashMap<String, String>> transactionList = (ArrayList<HashMap<String, String>>)params.get("data");
+        
+        int transactionSize = transactionList.size();
+        String[] transactions = new String[transactionSize];
+        //import into transactions from messageList
+        for(int i = 0; i < transactionSize; i++) {
+            transactions[i] = transactionList.get(i).get("title");
+        }
+                
+        myBlock.setMessages(transactions);
+
+        //I don't why yet but guess what related to binary tree structure
+        int merkleCount = 2;
+        while(merkleCount < transactionList.size()) {
+            merkleCount *= 2;
+        }
+
+        byte[] buffer = new byte[merkleCount];
+        doRand.nextBytes(buffer);
+
+        //setting up a block
+        myBlock.setNonce(buffer);
+        myBlock.setPreviousBlockHash(myBlock.hashFn(buffer));
+        myBlock.buildBlock();
+        System.out.println(myBlock);
+
+        byte[][] blockHead = myBlock.getHead();
+        obj.put("success", true);
+        obj.put("nonce", myBlock.bytesToString(blockHead[0]));
+        obj.put("previousBlockHash", myBlock.bytesToString(blockHead[1]));
+        obj.put("merkleTreeRoot", myBlock.bytesToString(blockHead[2]));
+        //tree structure also have to be sent later
+        
+        return obj;
+    }
 }

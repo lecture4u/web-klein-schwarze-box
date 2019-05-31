@@ -23,6 +23,7 @@ const RestApi = class {
   async postPriDecryption (params) { return await this.result(axios.post(`${baseURL}/pride`, params)) }
   async postPriEncryption (params) { return await this.result(axios.post(`${baseURL}/prien`, params)) }
   async postPubDecryption (params) { return await this.result(axios.post(`${baseURL}/pubde`, params)) }
+  async postTransaction (params) { return await this.result(axios.post(`${baseURL}/transaction`, params)) }
 
   //for test
   async getTest () { return await this.result(axios.get(`${baseURL}/test`)) }
