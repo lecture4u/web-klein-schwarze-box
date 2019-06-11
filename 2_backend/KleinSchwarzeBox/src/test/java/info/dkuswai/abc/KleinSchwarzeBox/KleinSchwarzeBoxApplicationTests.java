@@ -9,6 +9,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +24,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import info.dkuswai.abc.KleinSchwarzeBox.core.security.KeyService;
 import info.dkuswai.abc.KleinSchwarzeBox.core.tinyBlackBox.TinyBlock;
 
-// @RunWith(SpringRunner.class)
-// @SpringBootTest
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class KleinSchwarzeBoxApplicationTests {
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
@@ -29,7 +34,7 @@ public class KleinSchwarzeBoxApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		
+
 	}
 
 	@Before
@@ -54,8 +59,8 @@ public class KleinSchwarzeBoxApplicationTests {
 
 	@Test
 	public void keyTest() {
-		//test for generating asymmetric key cryptography
-		//espcially for testing via encoding and decoding using base64 of java.util
+		// test for generating asymmetric key cryptography
+		// espcially for testing via encoding and decoding using base64 of java.util
 		KeyService keyService = new KeyService();
 		System.out.println("key test");
 		System.out.println(keyService.getPublicKey().getEncoded());
@@ -66,7 +71,7 @@ public class KleinSchwarzeBoxApplicationTests {
 
 	@Test
 	public void tinyBlockInitTest() {
-		//gather all the code lines related to initalize a tinyBlock
+		// gather all the code lines related to initalize a tinyBlock
 		TinyBlock myBlock = new TinyBlock("MD5");
 		byte[] buffer = new byte[16];
 		Random doRand = new Random();
@@ -78,20 +83,20 @@ public class KleinSchwarzeBoxApplicationTests {
 		String[] transactions = new String[transactionList.size()];
 		transactionList.toArray(transactions);
 
-		//transaction logging test
+		// transaction logging test
 		System.out.print(transactions[0]);
 		assertEquals("abc", outContent.toString());
 
 		myBlock.setMessages(transactions);
 
-		buffer = new byte[3]; //4 stands for merkleCount
+		buffer = new byte[3]; // 4 stands for merkleCount
 		doRand.nextBytes(buffer);
 		myBlock.setNonce(buffer);
 		myBlock.setPreviousBlockHash(buffer);
 		myBlock.buildBlock();
 
 		// byte[][] merkleTree = myBlock.getMerkleTree();
-		
+
 		System.out.println(myBlock.toString());
 		assertEquals("abcasdf", outContent.toString());
 	}
@@ -106,21 +111,21 @@ public class KleinSchwarzeBoxApplicationTests {
 		transactionList.put("transaction3", "d");
 
 		String[] transactions = new String[transactionList.size()];
-		
+
 		transactionList.values().toArray(transactions);
 
 		/*
-		System.out.println(transactions[0]);
-		assertEquals("b", outContent.toString());
-		*/
-		
+		 * System.out.println(transactions[0]); assertEquals("b",
+		 * outContent.toString());
+		 */
+
 		int merkleCount = 2;
-		while(merkleCount < transactionList.size()) {
+		while (merkleCount < transactionList.size()) {
 			merkleCount *= 2;
 		}
 		byte[] buffer = new byte[merkleCount];
 		doRand.nextBytes(buffer);
-		
+
 		TinyBlock myBlock = new TinyBlock("MD5");
 		myBlock.setMessages(transactions);
 		myBlock.setNonce(buffer);
@@ -128,4 +133,34 @@ public class KleinSchwarzeBoxApplicationTests {
 		myBlock.buildBlock();
 	}
 
+	@Test
+	public void javaJSONObjectTest() throws JsonProcessingException {
+		
+		Gson gson = new Gson();
+		TestObject to = new TestObject();
+		String jsonData = gson.toJson(to);
+		// System.out.println(jsonData);
+
+		TestObject toFrom = gson.fromJson(jsonData, TestObject.class);
+		System.out.println(toFrom.getId());
+		assertEquals("1", outContent.toString());	
+	}
+}
+
+class TestObject {
+	private int id;
+	private int data;
+
+	TestObject() {
+		id = 1;
+		data = 5;
+	}
+
+	int getId() {
+		return id;
+	}
+
+	void setId(int toChange) {
+		id = toChange;
+	}
 }
