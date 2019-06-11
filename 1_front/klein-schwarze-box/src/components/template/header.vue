@@ -6,7 +6,7 @@
         <router-link to="/security">Security</router-link>
         <router-link to="/hashing">Hashing</router-link>
         <router-link to="/transaction-block">Transaction & Block</router-link>
-        <router-link to="/wallet">Wallet</router-link>
+        <!-- <router-link to="/wallet">Wallet</router-link> -->
         <router-link to="/blockchain">Blockchain</router-link>
         <router-link to="/contributor">Contributor</router-link>
       </nav>
